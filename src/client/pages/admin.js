@@ -1,5 +1,6 @@
 import "../styles.css";
 import { api, loadMe } from "../lib/api.js";
+import { go as goToPage } from "../lib/native.js";
 import { $, esc, onAction, toast } from "../lib/dom.js";
 import { brand, levelTag, showFatal } from "../lib/site.js";
 
@@ -347,7 +348,7 @@ root.addEventListener("change", async (event) => {
 
 loadMe().then((me) => {
   user = me;
-  if (!user) { location.href = "/account?next=/admin"; return; }
+  if (!user) { goToPage("/account?next=/admin"); return; }
   if (!["editor", "admin"].includes(user.role)) return showFatal(root, "Your account does not have access to the back office.");
   go("dashboard");
 });

@@ -1,8 +1,15 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
+// Browsers send the httpOnly "session" cookie; the Android app sends the same JWT as a Bearer token.
+function tokenFromRequest(req) {
+  const header = req.get("authorization") || "";
+  if (header.startsWith("Bearer ")) return header.slice(7).trim();
+  return req.cookies.session;
+}
+
 async function userFromRequest(req, config) {
-  const token = req.cookies.session;
+  const token = tokenFromRequest(req);
   if (!token) return null;
   const payload = jwt.verify(token, config.jwtSecret, { algorithms: ["HS256"] });
   const user = await User.findOne({ _id: payload.sub, status: "active" });

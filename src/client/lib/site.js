@@ -1,4 +1,5 @@
 import { esc, join } from "./dom.js";
+import { isNativeApp } from "./native.js";
 import { targetFor, BACK_VIEW } from "./muscle-map.js";
 
 export const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -48,4 +49,39 @@ export const dose = (sets, reps) => `${sets} × ${reps}`;
 
 export function showFatal(root, message) {
   root.innerHTML = `<div class="wrap section"><div class="empty">${esc(message)}</div></div>`;
+}
+
+// "Get the Android app" card (web only). Place appDownloadSlot() in the page, then call mountAppDownload().
+export const appDownloadSlot = () => `<div id="appDownload"></div>`;
+
+export async function mountAppDownload() {
+  const slot = document.getElementById("appDownload");
+  if (!slot || isNativeApp) return;
+  let release;
+  try {
+    const res = await fetch("/download/latest.json", { cache: "no-store" });
+    if (!res.ok) return;
+    release = await res.json();
+  } catch { return; }
+  const size = `${Math.round(release.size / (1024 * 1024))} MB`;
+  slot.innerHTML = `<div class="card card-pad" style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <img src="/brand/icon.svg" width="44" height="44" alt="" style="border-radius:12px">
+      <div style="flex:1 1 180px;min-width:0">
+        <div class="card-title">Groundwork for Android</div>
+        <div class="hint">gym.apk · v${esc(release.version)} · ${size}</div>
+      </div>
+      <a class="btn btn-primary" href="/download/${esc(release.file)}" download style="padding:12px 18px;border-radius:12px;font-size:14px">Download the app</a>
+    </div>
+    <details class="hint" style="font-size:13.5px;color:var(--dim)">
+      <summary style="cursor:pointer;color:var(--blue-text)">How to install without the Play Store</summary>
+      <ol style="margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.5">
+        <li>Open this page on your Android phone and tap <strong>Download the app</strong>.</li>
+        <li>Open the downloaded file. If Android asks, allow <strong>Install unknown apps</strong> for your browser (Settings → Apps → your browser → Install unknown apps).</li>
+        <li>If Play Protect warns about an unknown app, tap <strong>More details → Install anyway</strong>.</li>
+        <li>Open Groundwork and sign in with your usual account. You can switch “Install unknown apps” off again afterwards.</li>
+      </ol>
+      <p style="margin:10px 0 0;word-break:break-all;font-size:11.5px">SHA-256 ${esc(release.sha256)}</p>
+    </details>
+  </div>`;
 }

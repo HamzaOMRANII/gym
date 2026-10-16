@@ -3,7 +3,7 @@ const User = require("../models/user.model");
 const Plan = require("../models/plan.model");
 const WorkoutSession = require("../models/workoutSession.model");
 const Measurement = require("../models/measurement.model");
-const { setSessionCookie, clearSessionCookie, PASSWORD_MIN } = require("./auth.controller");
+const { setSessionCookie, clearSessionCookie, tokenForApp, PASSWORD_MIN } = require("./auth.controller");
 
 const optionalNumber = (value, max) => {
   if (value === "" || value == null) return undefined;
@@ -63,8 +63,8 @@ function accountController(config) {
         // Ends every other session; this browser gets a fresh cookie issued one second later.
         user.credentialsChangedAt = new Date(Date.now() - 1000);
         await user.save();
-        setSessionCookie(res, user, config, true);
-        res.json({ success: true });
+        const token = setSessionCookie(res, user, config, true);
+        res.json({ success: true, ...tokenForApp(req, token) });
       } catch (error) { next(error); }
     },
 

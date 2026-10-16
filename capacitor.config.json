@@ -1,0 +1,7 @@
+{
+  "appId": "com.omranisystems.gym",
+  "appName": "Groundwork",
+  "webDir": "dist",
+  "backgroundColor": "#0a0c12",
+  "android": { "allowMixedContent": false }
+}

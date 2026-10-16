@@ -79,3 +79,20 @@ and the session cookie is `Secure` when `APP_ORIGIN` is https.
 Payments (Stripe subscription and donations: the donate buttons record intent only), Google/Apple
 sign-in, password-reset email, notification emails (preferences are stored), blog, contact form,
 media uploads from the admin.
+
+## Android app
+
+The same pages are packaged as a sideloaded Android app (Capacitor, `com.omranisystems.gym`), never published to a store.
+In the app the pages are bundled, `/api` is called on `https://gym.omranisystems.com` (reachable without the
+gate code) and the session is a Bearer token returned when the request carries `X-Client: android`.
+
+```bash
+npm run build:apk -- --notes "What changed"   # bump "version" in package.json first
+```
+
+- Publishes to `/projects/mobile_builds/gym` (`gym-<version>.apk`, `gym.apk`, `latest.json`), served at
+  `gym.omranisystems.com/download/`; the landing and sign-in pages show a download card.
+- Needs Java 21 and the Android SDK in `/opt/android-sdk`; signing key in `/root/.gym-keystore/`
+  (`android/keystore.properties`, not in git). **Every update must be signed with this key.**
+- Icons and splash screens: `scripts/android-assets.sh`.
+- New images in `public/uploads` reach the app only with a new APK.

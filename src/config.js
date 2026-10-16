@@ -23,6 +23,8 @@ function loadConfig() {
     jwtSecret: process.env.JWT_SECRET,
     production,
     appOrigin,
+    // Origin of the Android app's web view (Capacitor serves the bundled pages from https://localhost)
+    nativeAppOrigin: process.env.NATIVE_APP_ORIGIN || "https://localhost",
     // HTTPS-only cookies, HSTS and upgrade-insecure-requests apply only when the public origin is HTTPS.
     https: appOrigin.startsWith("https://"),
   };

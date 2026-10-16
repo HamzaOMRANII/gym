@@ -2,7 +2,7 @@ import "../styles.css";
 import "../lib/muscle-map.js";
 import { loadCatalog, loadMe } from "../lib/api.js";
 import { $, esc, onAction, store } from "../lib/dom.js";
-import { header, brand, categoryArt, exerciseArt, dose, showFatal, DISCLAIMER } from "../lib/site.js";
+import { header, brand, categoryArt, exerciseArt, dose, showFatal, DISCLAIMER, appDownloadSlot, mountAppDownload } from "../lib/site.js";
 
 const SLIDES = [
   { kicker: "Start from zero", title: "No expertise required", body: "No coach, no bought program, no gym history. Five movements you can do correctly and a week that repeats — that is the whole entry fee." },
@@ -134,6 +134,8 @@ function render(user) {
       </div>
     </div>
 
+    <div class="wrap" style="padding-top:16px">${appDownloadSlot()}</div>
+
     <section id="library" class="wrap section">
       <div class="section-head">
         <div><div class="eyebrow">Exercise library</div><h2 class="h2">Train by body part</h2></div>
@@ -214,6 +216,7 @@ function render(user) {
   for (const field of ["height", "weight"]) {
     $(`#${field}`).addEventListener("input", (event) => { state[field] = event.target.value; $("#bmi").innerHTML = bmiHtml(); });
   }
+  mountAppDownload();
 }
 
 const rerenderHero = () => { $("#hero").innerHTML = heroHtml(); };

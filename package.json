@@ -11,12 +11,15 @@
     "start": "node src/server.js",
     "seed": "node scripts/seed.js",
     "bootstrap": "node scripts/bootstrap.js",
-    "check": "node --check src/server.js && node --check src/app.js && vite build --configLoader runner"
+    "check": "node --check src/server.js && node --check src/app.js && vite build --configLoader runner",
+    "build:apk": "node scripts/build-apk.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
     "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
@@ -27,6 +30,7 @@
     "mongoose": "^8.19.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "concurrently": "^9.2.1",
     "vite": "^7.1.12"
   }

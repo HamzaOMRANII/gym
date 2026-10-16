@@ -1,12 +1,27 @@
+import { appToken, isNativeApp, serverUrl } from "./native.js";
+
+// Requests that end the session: the app forgets its token when they succeed.
+const ENDS_SESSION = ["/api/auth/signout", "/api/account/signout-everywhere", "/api/account/delete"];
+
+function appHeaders() {
+  if (!isNativeApp) return {};
+  const token = appToken.get();
+  return { "X-Client": "android", ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+}
+
 export async function request(url, options = {}) {
   const { body, ...rest } = options;
-  const response = await fetch(url, {
-    credentials: "same-origin",
+  const response = await fetch(serverUrl(url), {
+    credentials: isNativeApp ? "omit" : "same-origin",
     ...rest,
-    headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...(rest.headers || {}) },
+    headers: { ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...appHeaders(), ...(rest.headers || {}) },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   const data = await response.json().catch(() => ({}));
+  if (isNativeApp) {
+    if (data.token) appToken.set(data.token);
+    if (response.ok && ENDS_SESSION.includes(url)) appToken.clear();
+  }
   if (!response.ok) throw Object.assign(new Error(data.error || "Request failed"), { status: response.status, body: data });
   return data;
 }
@@ -29,5 +44,9 @@ export function loadCatalog() {
 }
 
 export async function loadMe() {
-  try { return (await api.get("/api/auth/me")).user; } catch { return null; }
+  try {
+    const { user } = await api.get("/api/auth/me");
+    if (!user && isNativeApp) appToken.clear(); // expired or revoked token
+    return user;
+  } catch { return null; }
 }

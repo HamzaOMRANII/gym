@@ -18,7 +18,13 @@ function setSessionCookie(res, user, config, keep) {
     path: "/",
     ...(keep ? { maxAge: ttlSeconds * 1000 } : {}),
   });
+  return token;
 }
+
+// The Android app cannot use the cookie (its pages are not on gym.omranisystems.com), so requests
+// marked "X-Client: android" also get the token in the JSON body; the app stores it and sends it back.
+const isAppRequest = (req) => req.get("x-client") === "android";
+const tokenForApp = (req, token) => (isAppRequest(req) ? { token } : {});
 
 function clearSessionCookie(res, config) {
   res.clearCookie("session", { httpOnly: true, secure: config.https, sameSite: "lax", path: "/" });
@@ -44,8 +50,8 @@ function authController(config) {
           disclaimerAcceptedAt: new Date(),
           lastLoginAt: new Date(),
         });
-        setSessionCookie(res, user, config, Boolean(req.body.keep));
-        res.status(201).json({ success: true, user: user.toJSON() });
+        const token = setSessionCookie(res, user, config, isAppRequest(req) || Boolean(req.body.keep));
+        res.status(201).json({ success: true, user: user.toJSON(), ...tokenForApp(req, token) });
       } catch (error) { next(error); }
     },
 
@@ -58,8 +64,8 @@ function authController(config) {
         }
         user.lastLoginAt = new Date();
         await user.save();
-        setSessionCookie(res, user, config, Boolean(req.body.keep));
-        res.json({ success: true, user: user.toJSON() });
+        const token = setSessionCookie(res, user, config, isAppRequest(req) || Boolean(req.body.keep));
+        res.json({ success: true, user: user.toJSON(), ...tokenForApp(req, token) });
       } catch (error) { next(error); }
     },
 
@@ -78,4 +84,4 @@ function authController(config) {
   };
 }
 
-module.exports = { authController, setSessionCookie, clearSessionCookie, PASSWORD_MIN };
+module.exports = { authController, setSessionCookie, clearSessionCookie, tokenForApp, PASSWORD_MIN };

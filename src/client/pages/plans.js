@@ -1,6 +1,7 @@
 import "../styles.css";
 import "../lib/muscle-map.js";
 import { api, loadCatalog, loadMe } from "../lib/api.js";
+import { go } from "../lib/native.js";
 import { $, esc, onAction, store, toast } from "../lib/dom.js";
 import { header, disclaimer, levelTag, dose, showFatal, WEEKDAYS } from "../lib/site.js";
 
@@ -124,12 +125,12 @@ onAction(root, {
   swapKit: ({ key }) => { state.swapKit = key; rerenderSwap(); },
   adopt: async ({ slug }) => {
     const current = slug === (adoptedSlug || store.get(PLAN_KEY, null));
-    if (current) { location.href = "/app"; return; }
-    if (!user) { store.set(PLAN_KEY, slug); location.href = "/app"; return; }
+    if (current) { go("/app"); return; }
+    if (!user) { store.set(PLAN_KEY, slug); go("/app"); return; }
     state.busy = true; rerenderPlan();
     try {
       await api.post("/api/training/plan", { template: slug });
-      location.href = "/app";
+      go("/app");
     } catch (error) {
       state.busy = false; rerenderPlan();
       toast(error.message, { error: true });

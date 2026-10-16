@@ -1,7 +1,8 @@
 import "../styles.css";
 import { api, loadCatalog, loadMe } from "../lib/api.js";
+import { go, isNativeApp } from "../lib/native.js";
 import { $, esc, onAction, toast } from "../lib/dom.js";
-import { header, showFatal } from "../lib/site.js";
+import { header, showFatal, appDownloadSlot, mountAppDownload } from "../lib/site.js";
 
 const root = $("#root");
 const NOTIFICATIONS = [
@@ -47,6 +48,7 @@ function authScreen() {
         <div style="font-size:14px;color:var(--dim);text-align:center">${isRegister ? "Already have an account? " : "New here? "}<button type="button" class="link-btn" data-action="screen" data-screen="${isRegister ? "login" : "register"}">${isRegister ? "Sign in" : "Create an account"}</button></div>
         ${isRegister ? "" : `<p class="hint" style="text-align:center">Forgot your password? Contact the site administrator to reset it.</p>`}
       </form>
+      ${appDownloadSlot()}
     </div>
     <div class="auth-sell"><div class="auth-sell-in">
       <span class="glass-tag">Free forever</span>
@@ -104,7 +106,7 @@ function accountScreen() {
         </div>
         <div class="card card-pad stack">
           <div class="card-title">Your data</div>
-          <a class="btn btn-secondary btn-block" href="/api/account/export" download>Export everything (JSON)</a>
+          ${isNativeApp ? '<p class="hint">Export your data from the website: gym.omranisystems.com → My account.</p>' : '<a class="btn btn-secondary btn-block" href="/api/account/export" download>Export everything (JSON)</a>'}
           <div class="hint">Your account, plans, logged sets and measurements, downloaded right away.</div>
         </div>
         ${["editor", "admin"].includes(user.role) ? `<a class="card card-pad" href="/admin" style="gap:6px"><span class="card-title">Back office</span><span class="hint">Edit exercises, categories and plans.</span></a>` : ""}
@@ -140,6 +142,7 @@ function render() {
   const links = [["Exercises", "/#library"], ["Plans", "/plans"]];
   root.innerHTML = `${header({ user, links, current: "/account" })}${user ? accountScreen() : authScreen()}`;
   bindForms();
+  mountAppDownload();
 }
 
 function showError(id, message) {
@@ -171,7 +174,7 @@ function bindForms() {
     try {
       await api.post(screen === "register" ? "/api/auth/register" : "/api/auth/signin", body);
       const next = new URLSearchParams(location.search).get("next");
-      location.href = next && next.startsWith("/") && !next.startsWith("//") ? next : "/app";
+      go(next && next.startsWith("/") && !next.startsWith("//") ? next : "/app");
     } catch (error) {
       busy = false;
       form.querySelector('[type="submit"]').disabled = false;
@@ -208,7 +211,7 @@ function bindForms() {
     event.preventDefault();
     try {
       await api.post("/api/account/delete", Object.fromEntries(new FormData(event.target)));
-      location.href = "/";
+      go("/");
     } catch (error) { showError("#deleteError", error.message); }
   });
 }
@@ -225,10 +228,10 @@ onAction(root, {
   openPassword: () => { $("#passwordForm").reset(); $("#passwordError").classList.add("hidden"); $("#passwordDialog").showModal(); },
   openDelete: () => { $("#deleteForm").reset(); $("#deleteError").classList.add("hidden"); $("#deleteDialog").showModal(); },
   closeDialog: (_data, button) => button.closest("dialog").close(),
-  signout: async () => { await api.post("/api/auth/signout").catch(() => {}); location.href = "/"; },
+  signout: async () => { await api.post("/api/auth/signout").catch(() => {}); go("/"); },
   signoutEverywhere: async () => {
     if (!confirm("Sign out on every device, including this one?")) return;
-    try { await api.post("/api/account/signout-everywhere"); location.href = "/account"; } catch (error) { toast(error.message, { error: true }); }
+    try { await api.post("/api/account/signout-everywhere"); go("/account"); } catch (error) { toast(error.message, { error: true }); }
   },
 });
 

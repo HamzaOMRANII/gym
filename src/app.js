@@ -21,13 +21,26 @@ function createApp(config) {
   app.use(express.json({ limit: "100kb" }));
   app.use(express.urlencoded({ extended: false }));
   app.use(cookieParser());
+  // The Android app's pages run on https://localhost (Capacitor) and call /api with a Bearer token.
+  app.use("/api", (req, res, next) => {
+    if (req.get("origin") !== config.nativeAppOrigin) return next();
+    res.set({
+      "Access-Control-Allow-Origin": config.nativeAppOrigin,
+      "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Client",
+      "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE",
+      "Access-Control-Max-Age": "600",
+      Vary: "Origin",
+    });
+    if (req.method === "OPTIONS") return res.sendStatus(204);
+    next();
+  });
   app.use((req, res, next) => {
     const safeMethod = ["GET", "HEAD", "OPTIONS"].includes(req.method);
     if (!config.production || safeMethod) return next();
     const origin = req.get("origin");
     let normalized = null;
     try { normalized = origin ? new URL(origin).origin : null; } catch { /* malformed Origin header */ }
-    if (normalized && config.allowedOrigins.includes(normalized)) return next();
+    if (normalized && (config.allowedOrigins.includes(normalized) || normalized === config.nativeAppOrigin)) return next();
     console.warn(`Rejected ${req.method} ${req.originalUrl}: Origin "${origin || "(none)"}" is not in APP_ORIGIN (${config.allowedOrigins.join(", ")})`);
     return res.status(403).json({ success: false, error: `Untrusted request origin. Set APP_ORIGIN=${origin || "<site URL>"} on the server.` });
   });
