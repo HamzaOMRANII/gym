@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+doc-page:not(:defined) { visibility: hidden }
+figure, .keep { break-inside: avoid; orphans: 3; widows: 3 }
+h2 { break-before: page }
+h2:first-of-type { break-before: auto }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px }
+th { text-align: left; font-weight: 700; background: #f2f3f6; border: 1px solid #d6d9e0; padding: 7px 9px; vertical-align: top }
+td { border: 1px solid #d6d9e0; padding: 7px 9px; vertical-align: top }
+code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: #f2f3f6; padding: 1px 4px }
+</style>
+</helmet>
+
+<doc-page margin="0.8in">
+
+<div style="font-family: Archivo, system-ui, sans-serif; color: #16181d; font-size: 14.5px; line-height: 1.62">
+
+<div style="display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 2px solid #16181d; margin-bottom: 26px">
+  <span style="width: 34px; height: 34px; border-radius: 10px; background: #3b6bff; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px">G</span>
+  <span style="font-weight: 800; font-size: 15px; letter-spacing: -0.01em">Groundwork Training</span>
+  <span style="flex: 1"></span>
+  <span style="font-size: 11.5px; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase">Operations — Internal</span>
+</div>
+
+<h1 style="font-size: 34px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0 0 10px">Launch Requirements</h1>
+<p style="font-size: 17px; color: #4b5563; margin: 0 0 22px; line-height: 1.5">Everything that must exist — bought, configured, signed or verified — before the site can serve real users and take real money. Companion to GW-ARCH-001.</p>
+
+<table style="margin-bottom: 8px">
+  <tbody>
+    <tr><th style="width: 24%">Document ID</th><td>GW-OPS-001</td><th style="width: 24%">Version</th><td>1.0</td></tr>
+    <tr><th>Owner</th><td>Founder / Operations</td><th>Companion to</th><td>GW-ARCH-001</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">1. What you must have before day one</h2>
+
+<p>Five things gate everything else. Nothing below them can be finished until these exist.</p>
+
+<table>
+  <thead><tr><th style="width: 5%">#</th><th style="width: 24%">Requirement</th><th style="width: 16%">Lead time</th><th>Why it blocks</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>A registered legal entity or sole-trader registration</td><td>1–4 weeks</td><td>Stripe cannot pay out to an unverified individual in most countries, and your privacy policy needs a named data controller.</td></tr>
+    <tr><td>2</td><td>A business bank account</td><td>3–10 days</td><td>Stripe payouts, domain and hosting subscriptions.</td></tr>
+    <tr><td>3</td><td>The domain name</td><td>Minutes</td><td>DNS, SSL, email authentication and Stripe verification all key off it.</td></tr>
+    <tr><td>4</td><td>A dedicated admin email address on that domain</td><td>1 day</td><td>Every account below should be registered to <code>ops@yourdomain</code>, never a personal address.</td></tr>
+    <tr><td>5</td><td>A password manager with shared vault</td><td>1 hour</td><td>You are about to create fifteen accounts holding money and user data.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px"><strong>A note on item 4.</strong> Registering production infrastructure to a personal Gmail is the single most common early mistake. When ownership transfers, when someone leaves, or when you lose that account, you lose the company. Use a domain mailbox from the start.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">2. Domain and DNS</h2>
+
+<table>
+  <thead><tr><th style="width: 26%">Item</th><th style="width: 20%">Choice</th><th style="width: 14%">Cost</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Registrar</td><td>Cloudflare Registrar or Porkbun</td><td>€10–40 / year</td><td>Cloudflare sells at wholesale with no markup and no renewal trap. Avoid registrars whose first year is €1 and whose renewal is €35.</td></tr>
+    <tr><td>Domain TLD</td><td><code>.com</code> preferred</td><td>—</td><td><code>.fit</code>, <code>.training</code> and <code>.app</code> are cheaper but reduce trust for payment pages. If <code>.com</code> is taken, a two-word <code>.com</code> beats a one-word novelty TLD.</td></tr>
+    <tr><td>Registration term</td><td>5 years, auto-renew on</td><td>—</td><td>Removes the single most embarrassing outage cause. Set a calendar reminder independent of the registrar's email.</td></tr>
+    <tr><td>Registrar lock</td><td>Enabled</td><td>Free</td><td>Blocks unauthorised transfers.</td></tr>
+    <tr><td>WHOIS privacy</td><td>Enabled</td><td>Usually free</td><td>Your home address should not be in a public database.</td></tr>
+    <tr><td>Two-factor on registrar</td><td>Mandatory, app-based</td><td>Free</td><td>SMS 2FA is not acceptable on the account that controls your domain.</td></tr>
+    <tr><td>DNS host</td><td>Cloudflare (free plan)</td><td>€0</td><td>Authoritative nameservers, unmetered DDoS protection, WAF, analytics.</td></tr>
+    <tr><td>DNSSEC</td><td>Enabled</td><td>Free</td><td>One toggle in Cloudflare plus one DS record at the registrar.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px"><strong>Subdomains to reserve on day one:</strong> <code>www</code>, <code>staging</code>, <code>cdn</code>, <code>mail</code>, and a wildcard for pull-request previews. The full record table with values is section 9 of GW-ARCH-001.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">3. SSL / TLS certificates</h2>
+
+<p>You will not buy a certificate, and you should not want to. Paid SSL is a legacy product; browsers treat a free Let's Encrypt certificate and a €200 certificate identically. What matters is that issuance and renewal are automatic and that nobody else can issue for your domain.</p>
+
+<table>
+  <thead><tr><th style="width: 26%">Requirement</th><th style="width: 20%">Provided by</th><th style="width: 12%">Cost</th><th>Configuration</th></tr></thead>
+  <tbody>
+    <tr><td>Edge certificate</td><td>Cloudflare Universal SSL</td><td>€0</td><td>Automatic on any proxied record. Covers the apex and one level of subdomain.</td></tr>
+    <tr><td>Wildcard for previews</td><td>Cloudflare Advanced Certificate or Vercel</td><td>€0 on Vercel</td><td>Needed only if preview URLs sit on your own domain rather than <code>*.vercel.app</code>.</td></tr>
+    <tr><td>Origin certificate</td><td>Vercel automatic (Let's Encrypt)</td><td>€0</td><td>Issued per custom domain when you add it. Renews at 60 days.</td></tr>
+    <tr><td>Encryption mode</td><td>Cloudflare "Full (strict)"</td><td>—</td><td>Anything less allows an unencrypted or unvalidated hop between Cloudflare and your origin. Never use "Flexible".</td></tr>
+    <tr><td>TLS version floor</td><td>TLS 1.2 minimum, 1.3 preferred</td><td>—</td><td>Set in Cloudflare SSL settings. TLS 1.0 and 1.1 are disallowed by PCI.</td></tr>
+    <tr><td>HSTS</td><td>Enabled, 12 months, includeSubDomains, preload</td><td>—</td><td>Turn on only once every subdomain reliably serves HTTPS — preload is difficult to undo.</td></tr>
+    <tr><td>Always Use HTTPS</td><td>Cloudflare redirect rule</td><td>—</td><td>301 every <code>http://</code> request.</td></tr>
+    <tr><td>CAA record</td><td>DNS TXT</td><td>—</td><td><code>0 issue "letsencrypt.org"</code> — stops any other authority issuing a certificate for you.</td></tr>
+    <tr><td>Expiry monitoring</td><td>Better Stack SSL check</td><td>€0</td><td>Automation fails silently sometimes. Alert at 14 days remaining.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">4. Hosting and platform accounts</h2>
+
+<table>
+  <thead><tr><th style="width: 20%">Service</th><th style="width: 16%">Plan at launch</th><th style="width: 14%">Monthly</th><th style="width: 20%">Upgrade trigger</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>Vercel</td><td>Hobby → Pro</td><td>€0 → €20/seat</td><td>Commercial use, a second collaborator, or password-protected staging</td><td>Application hosting, edge network, cron</td></tr>
+    <tr><td>Neon</td><td>Free → Launch</td><td>€0 → €19</td><td>&gt;0.5 GB storage or you need more than 1 branch</td><td>PostgreSQL, branching, point-in-time recovery</td></tr>
+    <tr><td>Cloudflare</td><td>Free</td><td>€0</td><td>Rarely — free covers DNS, WAF basics and CDN</td><td>DNS, TLS, WAF, DDoS</td></tr>
+    <tr><td>Cloudflare R2</td><td>Pay-as-you-go</td><td>€0–5</td><td>Usage-based from the first byte</td><td>Exercise images, media, backups</td></tr>
+    <tr><td>Upstash</td><td>Free → Pay-go</td><td>€0–10</td><td>&gt;10k commands/day</td><td>Rate limiting, cache, job queue</td></tr>
+    <tr><td>Resend</td><td>Free → Pro</td><td>€0 → €20</td><td>&gt;3,000 emails/month or &gt;1 sending domain</td><td>Transactional email</td></tr>
+    <tr><td>Stripe</td><td>Standard</td><td>Per transaction</td><td>—</td><td>Subscriptions, donations</td></tr>
+    <tr><td>GitHub</td><td>Free → Team</td><td>€0 → €4/seat</td><td>Private repo with more than one collaborator needing reviews</td><td>Source control, CI</td></tr>
+    <tr><td>Sentry</td><td>Developer</td><td>€0</td><td>&gt;5k errors/month</td><td>Error tracking</td></tr>
+    <tr><td>Better Stack</td><td>Free</td><td>€0</td><td>&gt;10 monitors or SMS alerts needed</td><td>Uptime, SSL expiry, on-call</td></tr>
+    <tr><td>Plausible</td><td>Starter</td><td>€9</td><td>&gt;10k pageviews/month</td><td>Cookieless analytics</td></tr>
+    <tr><td>Mailbox (Fastmail / Google)</td><td>Basic</td><td>€3–6</td><td>Per mailbox</td><td><code>ops@</code>, <code>contact@</code>, <code>privacy@</code></td></tr>
+    <tr><td>1Password</td><td>Teams</td><td>€8</td><td>—</td><td>Shared credential custody</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px"><strong>Vercel's Hobby plan forbids commercial use.</strong> The moment you accept a donation you need Pro. Budget it from day one rather than discovering it after a takedown notice.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">5. Database management</h2>
+
+<p>Postgres on Neon needs almost no administration, but "almost none" is not "none". These are the standing obligations.</p>
+
+<table>
+  <thead><tr><th style="width: 22%">Task</th><th style="width: 14%">Frequency</th><th>What it means in practice</th></tr></thead>
+  <tbody>
+    <tr><td>Region choice</td><td>Once, irreversible</td><td>Pick the region closest to your users and keep EU data in the EU. <code>eu-central-1</code> for a European audience. Changing region later means a dump-and-restore with downtime.</td></tr>
+    <tr><td>Connection pooling</td><td>Once</td><td>Use Neon's pooled connection string in serverless functions. The direct string is for migrations only. Getting this wrong exhausts connections under modest traffic.</td></tr>
+    <tr><td>Migrations</td><td>Every release</td><td>Forward-only, applied automatically on deploy. Any migration that drops or renames must ship as an expand-and-contract pair over two releases.</td></tr>
+    <tr><td>Point-in-time recovery</td><td>Configure once</td><td>7 days on the paid tier. Verify it is actually enabled — the free tier gives 24 hours.</td></tr>
+    <tr><td>Logical backup</td><td>Nightly, automated</td><td><code>pg_dump</code> to R2 via a cron job, retained 30 days. This protects against provider-level loss, which PITR does not.</td></tr>
+    <tr><td>Restore drill</td><td>Quarterly</td><td>Restore last night's dump into a scratch branch, run the app against it, record how long it took. A backup never restored is not a backup.</td></tr>
+    <tr><td>Index review</td><td>Quarterly</td><td>Check <code>pg_stat_statements</code> for the slowest queries. Add indexes for what is actually slow, not what you guessed would be.</td></tr>
+    <tr><td>Access control</td><td>Ongoing</td><td>One role for the application, one read-only role for debugging, no shared superuser. Nobody connects to production from a laptop.</td></tr>
+    <tr><td>Anonymised seed</td><td>Monthly</td><td>A scrubbed snapshot for preview branches — emails hashed, measurements randomised, Stripe IDs nulled.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">6. Email infrastructure</h2>
+
+<p>Email is the requirement people underestimate. If your authentication records are wrong, password resets land in spam and support becomes unmanageable.</p>
+
+<table>
+  <thead><tr><th style="width: 22%">Requirement</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td>Sending domain</td><td>Use a subdomain — <code>mail.yourdomain</code> — so a deliverability problem never poisons your root domain reputation.</td></tr>
+    <tr><td>SPF</td><td>One TXT record, one <code>include</code> per sender. More than ten DNS lookups invalidates the record entirely.</td></tr>
+    <tr><td>DKIM</td><td>Provided by Resend as a CNAME or TXT. Must be verified before the first send.</td></tr>
+    <tr><td>DMARC</td><td>Start at <code>p=none</code> with a reporting address. Read the reports for two weeks, then move to <code>quarantine</code>, then <code>reject</code>.</td></tr>
+    <tr><td>Return-path alignment</td><td>Confirmed in the Resend dashboard. Misalignment fails DMARC even with valid SPF and DKIM.</td></tr>
+    <tr><td>Required mailboxes</td><td><code>contact@</code> (public), <code>privacy@</code> (required by GDPR), <code>ops@</code> (account registrations), <code>dmarc@</code> (reports).</td></tr>
+    <tr><td>Unsubscribe</td><td>Every non-transactional email needs a one-click unsubscribe header. Workout reminders count as marketing in the EU unless the user opted in explicitly.</td></tr>
+    <tr><td>Warm-up</td><td>Send volume ramps gradually. Do not import a list and send 5,000 emails on day one.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">7. Payments — what Stripe will ask for</h2>
+
+<table>
+  <thead><tr><th style="width: 26%">Requirement</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td>Business verification</td><td>Registration number, address, and the identity document of every beneficial owner. Allow a week; it is occasionally slower.</td></tr>
+    <tr><td>Bank account</td><td>In the business name, in the country of registration. Personal accounts are rejected for company entities.</td></tr>
+    <tr><td>Public business details</td><td>A statement descriptor, a support email and a support URL that resolve. Stripe checks these.</td></tr>
+    <tr><td>Required public pages</td><td>Terms of service, privacy policy, refund policy and a contact page must be live before verification. Stripe reviews them.</td></tr>
+    <tr><td>Fees</td><td>European cards 1.5% + €0.25; UK 1.5% + £0.20; non-European cards 3.25% + €0.25. Currency conversion adds 2%.</td></tr>
+    <tr><td>Donations</td><td>Not a special product — a one-off Payment Link or Checkout in payment mode. Nothing is tax-deductible for the donor unless you are a registered charity, and you must not imply otherwise.</td></tr>
+    <tr><td>Subscriptions</td><td>Stripe Billing plus the hosted Customer Portal. Do not build your own cancellation flow; EU law requires cancellation be as easy as signup, and the portal satisfies that.</td></tr>
+    <tr><td>Tax</td><td>Stripe Tax, €0 until you have transactions, then a percentage. Digital services VAT in the EU is charged at the customer's rate — this is not optional and not something to hand-roll.</td></tr>
+    <tr><td>SCA</td><td>Strong Customer Authentication is mandatory in Europe. Stripe Checkout handles it; a custom card form does not by default.</td></tr>
+    <tr><td>Webhook endpoint</td><td>A public HTTPS URL with signature verification, live before you take a single payment. Entitlement is granted by webhook, never by a browser redirect.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">8. Legal and compliance</h2>
+
+<p>These are requirements, not recommendations, for a site that holds health-adjacent data on European users and takes money.</p>
+
+<table>
+  <thead><tr><th style="width: 26%">Document or control</th><th style="width: 14%">Required by</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Privacy policy</td><td>GDPR</td><td>Must name the controller, list every processor (Vercel, Neon, Stripe, Resend, Cloudflare, Sentry, Plausible), state retention periods and explain the user's rights.</td></tr>
+    <tr><td>Terms of service</td><td>Stripe, general</td><td>Includes the training disclaimer, account termination terms and limitation of liability.</td></tr>
+    <tr><td>Cookie / consent notice</td><td>ePrivacy</td><td>Plausible is cookieless, so if you avoid third-party embeds you may need only an informational notice rather than a consent gate. Verify with counsel before claiming this.</td></tr>
+    <tr><td>Medical disclaimer</td><td>Risk management</td><td>Versioned and explicitly accepted at signup with a timestamp — not a footer line. You already have the wording.</td></tr>
+    <tr><td>Refund policy</td><td>Stripe, EU consumer law</td><td>EU digital purchases carry a 14-day withdrawal right unless the customer expressly waives it at checkout.</td></tr>
+    <tr><td>Data processing register</td><td>GDPR Art. 30</td><td>A spreadsheet listing each processing purpose, lawful basis, data category and retention period. Required even for small operators.</td></tr>
+    <tr><td>Processor agreements</td><td>GDPR Art. 28</td><td>Every provider above offers a DPA. Accept each one — usually a checkbox in the dashboard — and file the confirmations.</td></tr>
+    <tr><td>Data export and erasure</td><td>GDPR Art. 15, 17</td><td>Self-service in the account settings. Manual handling does not scale and misses the one-month deadline.</td></tr>
+    <tr><td>Breach procedure</td><td>GDPR Art. 33</td><td>A written runbook. You have 72 hours to notify a supervisory authority; that is not time to invent a process.</td></tr>
+    <tr><td>Accessibility statement</td><td>EAA (from June 2025)</td><td>The European Accessibility Act covers e-commerce. A site taking payments needs WCAG 2.2 AA and a published statement.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">9. Budget</h2>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 20px 0 8px">9.1 One-time setup</h3>
+
+<table>
+  <thead><tr><th style="width: 40%">Item</th><th style="width: 22%">Cost</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Company registration</td><td>€50–1,500</td><td>Varies enormously by country and structure.</td></tr>
+    <tr><td>Domain, 5 years</td><td>€50–200</td><td></td></tr>
+    <tr><td>Legal document review</td><td>€300–1,200</td><td>Templates plus one hour of a lawyer's time. Do not skip for the medical disclaimer.</td></tr>
+    <tr><td>Exercise photography or illustration</td><td>€500–4,000</td><td>The largest discretionary line. Commission or license — never use unlicensed material for instructional content.</td></tr>
+    <tr><td>Logo and brand assets</td><td>€0–800</td><td></td></tr>
+    <tr><th>Total</th><th>€900 – 7,700</th><td>Realistic lean start: about €1,200.</td></tr>
+  </tbody>
+</table>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">9.2 Monthly running cost</h3>
+
+<table>
+  <thead><tr><th style="width: 26%">Service</th><th style="width: 18%">Launch<br>&lt; 1,000 users</th><th style="width: 18%">Traction<br>~10,000 users</th><th>Growth<br>~50,000 users</th></tr></thead>
+  <tbody>
+    <tr><td>Vercel</td><td>€20</td><td>€20–60</td><td>€80–200</td></tr>
+    <tr><td>Neon PostgreSQL</td><td>€19</td><td>€40–70</td><td>€100–180</td></tr>
+    <tr><td>Cloudflare + R2</td><td>€2</td><td>€8</td><td>€20–40</td></tr>
+    <tr><td>Upstash</td><td>€0</td><td>€8</td><td>€25</td></tr>
+    <tr><td>Resend</td><td>€0</td><td>€20</td><td>€35</td></tr>
+    <tr><td>Mailbox</td><td>€6</td><td>€6</td><td>€12</td></tr>
+    <tr><td>Plausible</td><td>€9</td><td>€14</td><td>€29</td></tr>
+    <tr><td>Sentry + Better Stack</td><td>€0</td><td>€26</td><td>€55</td></tr>
+    <tr><td>1Password</td><td>€8</td><td>€8</td><td>€16</td></tr>
+    <tr><th>Infrastructure total</th><th>€64</th><th>€150–240</th><th>€370–590</th></tr>
+    <tr><td>Stripe fees</td><td colspan="3">1.5% + €0.25 per European transaction — scales with revenue, not users.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px">First-year infrastructure at launch scale is roughly <strong>€770</strong>, plus one-time setup. Aggressive free-tier use brings the monthly figure to about €35 until you take your first payment — but the Vercel commercial-use rule makes that a short window.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">10. Pre-launch checklist</h2>
+
+<p>Nothing goes live until every line is ticked.</p>
+
+<table>
+  <thead><tr><th style="width: 18%">Area</th><th>Verification</th></tr></thead>
+  <tbody>
+    <tr><td>DNS</td><td>All records resolve from an external resolver · DNSSEC active · CAA present · TTLs back to 3600 after cutover</td></tr>
+    <tr><td>TLS</td><td>SSL Labs grade A or better · Full (strict) mode · HSTS live · <code>http://</code> redirects · certificate expiry alert configured</td></tr>
+    <tr><td>Application</td><td>Production build deployed from <code>main</code> · environment variables set · no test keys in production · error pages styled · <code>robots.txt</code> and sitemap served</td></tr>
+    <tr><td>Database</td><td>Migrations applied · PITR confirmed · nightly dump verified in R2 · one restore drill completed and timed</td></tr>
+    <tr><td>Email</td><td>SPF, DKIM and DMARC all pass on a real test send · reset and welcome mails land in the inbox, not spam · contact form delivers</td></tr>
+    <tr><td>Payments</td><td>Live mode enabled · webhook endpoint verified and signed · a €1 real donation taken, confirmed and refunded · Customer Portal reachable</td></tr>
+    <tr><td>Security</td><td>Admin 2FA enforced · CSP live without console violations · rate limits verified on auth and contact · no secret in the repository history</td></tr>
+    <tr><td>Legal</td><td>Privacy, terms, refund and accessibility pages live and linked in the footer · disclaimer acceptance recorded at signup · DPAs filed</td></tr>
+    <tr><td>Monitoring</td><td>Uptime check green · Sentry receiving a deliberately triggered test error · alert routing tested on a real phone</td></tr>
+    <tr><td>Quality</td><td>Lighthouse ≥ 90 on mobile · axe scan clean · tested on a real phone on cellular data, not a desktop emulator</td></tr>
+    <tr><td>Recovery</td><td>Rollback rehearsed once · runbook written for: site down, payments failing, database restore, credential leak</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">11. Ongoing operations calendar</h2>
+
+<table>
+  <thead><tr><th style="width: 18%">Cadence</th><th>Task</th></tr></thead>
+  <tbody>
+    <tr><td>Daily (automated)</td><td>Logical backup to R2 · uptime checks · error digest</td></tr>
+    <tr><td>Weekly</td><td>Review Sentry issues · check webhook failure queue · merge dependency updates</td></tr>
+    <tr><td>Monthly</td><td>Refresh the anonymised seed · review infrastructure spend against forecast · read DMARC reports</td></tr>
+    <tr><td>Quarterly</td><td>Restore drill · index and slow-query review · access audit — remove anyone who left · rotate API keys</td></tr>
+    <tr><td>Annually</td><td>Accessibility audit · security review · re-read the privacy policy against what the product actually does now · confirm domain renewal independently of the registrar's email</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">12. Recommended order of work</h2>
+
+<table>
+  <thead><tr><th style="width: 10%">Week</th><th style="width: 30%">Focus</th><th>Outcome</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>Entity, bank, domain, mailbox, password manager</td><td>You can legally sign up for everything else.</td></tr>
+    <tr><td>1</td><td>Cloudflare DNS, TLS, GitHub, Vercel, Neon</td><td>A placeholder page serves over HTTPS from your own domain.</td></tr>
+    <tr><td>2</td><td>Resend, email authentication, R2, Upstash, Sentry</td><td>A test email passes SPF, DKIM and DMARC.</td></tr>
+    <tr><td>3</td><td>Legal pages drafted, DPAs accepted, register started</td><td>Stripe verification can be submitted.</td></tr>
+    <tr><td>4</td><td>Stripe verification, test-mode integration</td><td>A test donation completes end to end.</td></tr>
+    <tr><td>5+</td><td>Build phases per GW-ARCH-001</td><td>Infrastructure is no longer on the critical path.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 14px">The point of the sequence is that weeks 0 to 4 run in parallel with development and have long external lead times — company registration and Stripe verification wait for other people. Start them first, then build while they process.</p>
+
+<div style="margin-top: 34px; padding-top: 14px; border-top: 2px solid #16181d; font-size: 11.5px; color: #6b7280">
+  GW-OPS-001 · Version 1.0 · Groundwork Training · Internal — not for distribution
+</div>
+
+</div>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>

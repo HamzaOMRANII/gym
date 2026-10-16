@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="./doc-page.js"></script>
+<style>
+doc-page:not(:defined) { visibility: hidden }
+figure, .keep { break-inside: avoid; orphans: 3; widows: 3 }
+h2 { break-before: page }
+h2:first-of-type { break-before: auto }
+table { border-collapse: collapse; width: 100%; font-size: 12.5px }
+th { text-align: left; font-weight: 700; background: #f2f3f6; border: 1px solid #d6d9e0; padding: 7px 9px; vertical-align: top }
+td { border: 1px solid #d6d9e0; padding: 7px 9px; vertical-align: top }
+code { font-family: 'JetBrains Mono', monospace; font-size: 0.88em; background: #f2f3f6; padding: 1px 4px }
+</style>
+</helmet>
+
+<doc-page margin="0.8in">
+
+<div style="font-family: Archivo, system-ui, sans-serif; color: #16181d; font-size: 14.5px; line-height: 1.62">
+
+<div style="display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 2px solid #16181d; margin-bottom: 26px">
+  <span style="width: 34px; height: 34px; border-radius: 10px; background: #3b6bff; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px">G</span>
+  <span style="font-weight: 800; font-size: 15px; letter-spacing: -0.01em">Groundwork Training</span>
+  <span style="flex: 1"></span>
+  <span style="font-size: 11.5px; color: #6b7280; letter-spacing: 0.08em; text-transform: uppercase">Confidential — Internal</span>
+</div>
+
+<h1 style="font-size: 34px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0 0 10px">Software Architecture Document</h1>
+<p style="font-size: 17px; color: #4b5563; margin: 0 0 22px; line-height: 1.5">Groundwork Training — a fitness programming, scheduling and progress-tracking platform. This document defines the target architecture, the application inventory, the data model, the hosting and DNS topology, and the delivery plan.</p>
+
+<table style="margin-bottom: 8px">
+  <tbody>
+    <tr><th style="width: 24%">Document ID</th><td>GW-ARCH-001</td><th style="width: 24%">Version</th><td>1.0 (Draft)</td></tr>
+    <tr><th>Status</th><td>For review</td><th>Classification</th><td>Internal</td></tr>
+    <tr><th>Owner</th><td>Engineering Lead</td><th>Last updated</th><td>September 2026</td></tr>
+    <tr><th>Audience</th><td colspan="3">Engineering, product, operations, and any external development partner onboarding to the project.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">1. Purpose and scope</h2>
+
+<p>Groundwork Training is a public web platform that teaches beginners how to train. It publishes a curated exercise library, generates and stores personal workout plans, records training progress, and sustains itself through donations and an optional paid tier.</p>
+
+<p style="margin-bottom: 6px"><strong>In scope for this architecture:</strong></p>
+<ul style="margin: 0 0 14px; padding-left: 20px">
+  <li>User identity, accounts and profile management (CRUD).</li>
+  <li>An administrative back office for exercise, category and content management.</li>
+  <li>Personal plan management — assignment, customization and scheduling.</li>
+  <li>Transactional and scheduled notifications, plus a public contact channel.</li>
+  <li>An editorial blog with public, indexable content.</li>
+  <li>Responsive delivery across mobile, tablet and desktop.</li>
+  <li>Recurring subscription payments for advanced plans.</li>
+  <li>One-off donation payments.</li>
+</ul>
+
+<p style="margin-bottom: 6px"><strong>Explicitly out of scope for version 1:</strong> native mobile applications, wearable-device integration, video hosting, social features, coach marketplace, and multi-language content.</p>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">1.1 Architectural drivers</h3>
+
+<table>
+  <thead><tr><th style="width: 22%">Driver</th><th style="width: 44%">Requirement</th><th>Architectural consequence</th></tr></thead>
+  <tbody>
+    <tr><td>Discoverability</td><td>Exercise and blog pages must rank in organic search.</td><td>Server-rendered HTML, not a client-only SPA.</td></tr>
+    <tr><td>Mobile-first use</td><td>Used on a phone, in a gym, on poor connectivity.</td><td>Small payloads, aggressive caching, offline-tolerant logging.</td></tr>
+    <tr><td>Small team</td><td>One to three developers.</td><td>One deployable, managed services, no self-hosted infrastructure.</td></tr>
+    <tr><td>Editorial velocity</td><td>Non-developers must publish content.</td><td>A real CMS, not database seeds or hard-coded content.</td></tr>
+    <tr><td>Money handling</td><td>Subscriptions and donations.</td><td>No card data on our servers; PCI scope reduced to SAQ-A.</td></tr>
+    <tr><td>Personal data</td><td>Health-adjacent measurements of EU residents.</td><td>GDPR obligations: export, erasure, consent, data residency.</td></tr>
+  </tbody>
+</table>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">1.2 Non-functional requirements</h3>
+
+<table>
+  <thead><tr><th style="width: 26%">Attribute</th><th style="width: 30%">Target</th><th>Measured by</th></tr></thead>
+  <tbody>
+    <tr><td>Availability</td><td>99.5% monthly for the public site</td><td>Uptime monitor, 1-minute interval</td></tr>
+    <tr><td>Page performance</td><td>LCP &lt; 2.5s, INP &lt; 200ms on 4G mobile</td><td>Real-user metrics via Vercel Analytics</td></tr>
+    <tr><td>API latency</td><td>p95 &lt; 400ms for authenticated reads</td><td>Application traces</td></tr>
+    <tr><td>Recovery</td><td>RPO 24h, RTO 4h</td><td>Restore drill, quarterly</td></tr>
+    <tr><td>Accessibility</td><td>WCAG 2.2 AA</td><td>Automated axe scan in CI + manual audit</td></tr>
+    <tr><td>Security</td><td>No critical findings open &gt; 7 days</td><td>Dependency scanning, annual review</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">2. System context</h2>
+
+<p>The platform serves three human actor types and integrates with five external systems. No other party writes to our data stores.</p>
+
+<figure style="margin: 18px 0 8px">
+<svg viewBox="0 0 880 430" style="width: 100%; height: auto; display: block; background: #fafbfc; border: 1px solid #d6d9e0">
+  <defs>
+    <marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#4b5563"/></marker>
+  </defs>
+  <g font-family="Archivo, sans-serif">
+    <rect x="20" y="30" width="150" height="76" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.5"/>
+    <text x="95" y="58" font-size="14" font-weight="700" text-anchor="middle">Visitor</text>
+    <text x="95" y="78" font-size="11" fill="#6b7280" text-anchor="middle">Anonymous</text>
+    <text x="95" y="93" font-size="11" fill="#6b7280" text-anchor="middle">Reads library, blog</text>
+
+    <rect x="20" y="172" width="150" height="86" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.5"/>
+    <text x="95" y="200" font-size="14" font-weight="700" text-anchor="middle">Member</text>
+    <text x="95" y="220" font-size="11" fill="#6b7280" text-anchor="middle">Free or paid</text>
+    <text x="95" y="235" font-size="11" fill="#6b7280" text-anchor="middle">Plans, logging,</text>
+    <text x="95" y="249" font-size="11" fill="#6b7280" text-anchor="middle">progress</text>
+
+    <rect x="20" y="324" width="150" height="76" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.5"/>
+    <text x="95" y="352" font-size="14" font-weight="700" text-anchor="middle">Administrator</text>
+    <text x="95" y="372" font-size="11" fill="#6b7280" text-anchor="middle">Editor / webmaster</text>
+    <text x="95" y="387" font-size="11" fill="#6b7280" text-anchor="middle">Content, users</text>
+
+    <rect x="310" y="150" width="230" height="130" rx="12" fill="#3b6bff" stroke="#2a4fd0" stroke-width="1.5"/>
+    <text x="425" y="192" font-size="17" font-weight="800" fill="#fff" text-anchor="middle">Groundwork</text>
+    <text x="425" y="214" font-size="17" font-weight="800" fill="#fff" text-anchor="middle">Platform</text>
+    <text x="425" y="240" font-size="11.5" fill="#d8e2ff" text-anchor="middle">Web application, API,</text>
+    <text x="425" y="256" font-size="11.5" fill="#d8e2ff" text-anchor="middle">CMS and datastore</text>
+
+    <rect x="680" y="20" width="178" height="56" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="769" y="44" font-size="13" font-weight="700" text-anchor="middle">Stripe</text>
+    <text x="769" y="62" font-size="10.5" fill="#6b7280" text-anchor="middle">Payments, subscriptions</text>
+
+    <rect x="680" y="96" width="178" height="56" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="769" y="120" font-size="13" font-weight="700" text-anchor="middle">Resend</text>
+    <text x="769" y="138" font-size="10.5" fill="#6b7280" text-anchor="middle">Transactional email</text>
+
+    <rect x="680" y="172" width="178" height="56" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="769" y="196" font-size="13" font-weight="700" text-anchor="middle">Object storage</text>
+    <text x="769" y="214" font-size="10.5" fill="#6b7280" text-anchor="middle">Media assets, CDN</text>
+
+    <rect x="680" y="248" width="178" height="56" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="769" y="272" font-size="13" font-weight="700" text-anchor="middle">Identity providers</text>
+    <text x="769" y="290" font-size="10.5" fill="#6b7280" text-anchor="middle">Google, Apple OAuth</text>
+
+    <rect x="680" y="324" width="178" height="56" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="769" y="348" font-size="13" font-weight="700" text-anchor="middle">Web Push service</text>
+    <text x="769" y="366" font-size="10.5" fill="#6b7280" text-anchor="middle">Reminders (phase 2)</text>
+
+    <line x1="170" y1="68" x2="305" y2="175" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="170" y1="215" x2="305" y2="215" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="170" y1="362" x2="305" y2="256" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <text x="238" y="110" font-size="10" fill="#6b7280" text-anchor="middle">HTTPS</text>
+    <text x="238" y="208" font-size="10" fill="#6b7280" text-anchor="middle">HTTPS, session</text>
+    <text x="238" y="320" font-size="10" fill="#6b7280" text-anchor="middle">HTTPS, RBAC</text>
+
+    <line x1="545" y1="180" x2="675" y2="52" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="545" y1="196" x2="675" y2="126" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="545" y1="212" x2="675" y2="202" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="545" y1="234" x2="675" y2="272" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+    <line x1="545" y1="252" x2="675" y2="348" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah)"/>
+  </g>
+</svg>
+<figcaption style="font-size: 12px; color: #6b7280; margin-top: 7px">Figure 1 — System context (C4 level 1). All external integrations are outbound from the platform; only Stripe calls back in, through a signed webhook.</figcaption>
+</figure>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">3. Container architecture</h2>
+
+<p>The platform is deliberately a <strong>modular monolith</strong>, not a microservice estate. A team of one to three engineers cannot operate a distributed system without spending most of its capacity on operations. Modules are separated by clear internal boundaries so that any one of them — most likely the notification worker — can be extracted later without a rewrite.</p>
+
+<figure style="margin: 18px 0 8px">
+<svg viewBox="0 0 880 480" style="width: 100%; height: auto; display: block; background: #fafbfc; border: 1px solid #d6d9e0">
+  <defs>
+    <marker id="ah2" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#4b5563"/></marker>
+  </defs>
+  <g font-family="Archivo, sans-serif">
+    <rect x="16" y="16" width="848" height="300" rx="12" fill="none" stroke="#3b6bff" stroke-width="1.3" stroke-dasharray="6 4"/>
+    <text x="34" y="40" font-size="11.5" font-weight="700" fill="#3b6bff">DEPLOYMENT BOUNDARY — Next.js application (Vercel)</text>
+
+    <rect x="40" y="58" width="188" height="96" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="134" y="84" font-size="13.5" font-weight="700" text-anchor="middle">Web frontend</text>
+    <text x="134" y="104" font-size="10.5" fill="#6b7280" text-anchor="middle">React Server Components</text>
+    <text x="134" y="119" font-size="10.5" fill="#6b7280" text-anchor="middle">Tailwind, shadcn/ui</text>
+    <text x="134" y="139" font-size="10.5" fill="#3b6bff" text-anchor="middle">Public + member UI</text>
+
+    <rect x="252" y="58" width="188" height="96" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="346" y="84" font-size="13.5" font-weight="700" text-anchor="middle">Application API</text>
+    <text x="346" y="104" font-size="10.5" fill="#6b7280" text-anchor="middle">Route handlers, actions</text>
+    <text x="346" y="119" font-size="10.5" fill="#6b7280" text-anchor="middle">Zod validation</text>
+    <text x="346" y="139" font-size="10.5" fill="#3b6bff" text-anchor="middle">Plans, logs, billing</text>
+
+    <rect x="464" y="58" width="188" height="96" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="558" y="84" font-size="13.5" font-weight="700" text-anchor="middle">Admin / CMS</text>
+    <text x="558" y="104" font-size="10.5" fill="#6b7280" text-anchor="middle">Payload CMS 3</text>
+    <text x="558" y="119" font-size="10.5" fill="#6b7280" text-anchor="middle">Mounted at /admin</text>
+    <text x="558" y="139" font-size="10.5" fill="#3b6bff" text-anchor="middle">Exercises, blog, users</text>
+
+    <rect x="676" y="58" width="164" height="96" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="758" y="84" font-size="13.5" font-weight="700" text-anchor="middle">Auth module</text>
+    <text x="758" y="104" font-size="10.5" fill="#6b7280" text-anchor="middle">Better Auth</text>
+    <text x="758" y="119" font-size="10.5" fill="#6b7280" text-anchor="middle">Sessions, RBAC</text>
+    <text x="758" y="139" font-size="10.5" fill="#3b6bff" text-anchor="middle">OAuth + password</text>
+
+    <rect x="40" y="182" width="272" height="86" rx="10" fill="#eef2ff" stroke="#3b6bff" stroke-width="1.3"/>
+    <text x="176" y="208" font-size="13.5" font-weight="700" text-anchor="middle">Domain layer</text>
+    <text x="176" y="228" font-size="10.5" fill="#4b5563" text-anchor="middle">Plan generation, progression rules,</text>
+    <text x="176" y="243" font-size="10.5" fill="#4b5563" text-anchor="middle">entitlement checks, aggregation</text>
+    <text x="176" y="259" font-size="10.5" fill="#6b7280" text-anchor="middle">Pure TypeScript — no I/O</text>
+
+    <rect x="336" y="182" width="248" height="86" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="460" y="208" font-size="13.5" font-weight="700" text-anchor="middle">Persistence layer</text>
+    <text x="460" y="228" font-size="10.5" fill="#6b7280" text-anchor="middle">Drizzle ORM, typed queries</text>
+    <text x="460" y="245" font-size="10.5" fill="#6b7280" text-anchor="middle">Migrations, seed data</text>
+
+    <rect x="608" y="182" width="232" height="86" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="724" y="208" font-size="13.5" font-weight="700" text-anchor="middle">Background jobs</text>
+    <text x="724" y="228" font-size="10.5" fill="#6b7280" text-anchor="middle">Cron: reminders, digests</text>
+    <text x="724" y="245" font-size="10.5" fill="#6b7280" text-anchor="middle">Queue: email, webhooks</text>
+
+    <rect x="40" y="352" width="200" height="82" rx="10" fill="#16181d"/>
+    <text x="140" y="380" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle">PostgreSQL</text>
+    <text x="140" y="399" font-size="10.5" fill="#9ca3af" text-anchor="middle">Primary datastore</text>
+    <text x="140" y="415" font-size="10.5" fill="#9ca3af" text-anchor="middle">Neon — serverless</text>
+
+    <rect x="260" y="352" width="190" height="82" rx="10" fill="#16181d"/>
+    <text x="355" y="380" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle">Redis</text>
+    <text x="355" y="399" font-size="10.5" fill="#9ca3af" text-anchor="middle">Rate limits, cache</text>
+    <text x="355" y="415" font-size="10.5" fill="#9ca3af" text-anchor="middle">Upstash — serverless</text>
+
+    <rect x="470" y="352" width="190" height="82" rx="10" fill="#16181d"/>
+    <text x="565" y="380" font-size="13.5" font-weight="700" fill="#fff" text-anchor="middle">Object storage</text>
+    <text x="565" y="399" font-size="10.5" fill="#9ca3af" text-anchor="middle">Images, media</text>
+    <text x="565" y="415" font-size="10.5" fill="#9ca3af" text-anchor="middle">Cloudflare R2 + CDN</text>
+
+    <rect x="680" y="352" width="160" height="82" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="760" y="380" font-size="13" font-weight="700" text-anchor="middle">External SaaS</text>
+    <text x="760" y="399" font-size="10.5" fill="#6b7280" text-anchor="middle">Stripe, Resend,</text>
+    <text x="760" y="415" font-size="10.5" fill="#6b7280" text-anchor="middle">OAuth providers</text>
+
+    <line x1="134" y1="154" x2="160" y2="180" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="346" y1="154" x2="230" y2="182" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="558" y1="154" x2="470" y2="182" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="758" y1="154" x2="740" y2="180" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="240" y1="225" x2="332" y2="225" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="440" y1="270" x2="200" y2="350" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="460" y1="270" x2="370" y2="350" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="700" y1="270" x2="600" y2="350" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+    <line x1="760" y1="270" x2="760" y2="350" stroke="#4b5563" stroke-width="1.2" marker-end="url(#ah2)"/>
+  </g>
+</svg>
+<figcaption style="font-size: 12px; color: #6b7280; margin-top: 7px">Figure 2 — Container diagram (C4 level 2). The domain layer holds no I/O, which makes plan generation and progression rules unit-testable without a database.</figcaption>
+</figure>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">4. Application inventory and stack</h2>
+
+<p>Six logical applications ship from a single repository. Each row below is a deployable or an independently versioned surface.</p>
+
+<table>
+  <thead><tr><th style="width: 17%">Application</th><th style="width: 21%">Responsibility</th><th style="width: 28%">Stack</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Public web</strong></td>
+      <td>Marketing pages, exercise library, blog, donation flow</td>
+      <td>Next.js 15 (App Router), React 19, TypeScript 5, Tailwind CSS 4, shadcn/ui</td>
+      <td>Statically generated where possible with incremental revalidation; the primary SEO surface.</td>
+    </tr>
+    <tr>
+      <td><strong>Member app</strong></td>
+      <td>Plans, workout mode, set logging, progress charts, account settings</td>
+      <td>Same Next.js app, authenticated route group; TanStack Query for client state; Recharts for charts</td>
+      <td>Installable as a PWA. Set logging writes to IndexedDB first and syncs, so a dead gym signal never loses a session.</td>
+    </tr>
+    <tr>
+      <td><strong>Admin / back office</strong></td>
+      <td>Exercise and category CRUD, blog authoring, user administration, media library</td>
+      <td>Payload CMS 3, mounted in the same Next.js process at <code>/admin</code></td>
+      <td>Ships an admin UI, role-based access, draft/publish, versioning and a media library without bespoke development.</td>
+    </tr>
+    <tr>
+      <td><strong>Application API</strong></td>
+      <td>Typed contract for the member app and any future mobile client</td>
+      <td>Next.js route handlers, Zod schemas, REST with a documented OpenAPI spec</td>
+      <td>Server Actions handle form mutations; REST covers everything a non-web client would need.</td>
+    </tr>
+    <tr>
+      <td><strong>Worker</strong></td>
+      <td>Scheduled reminders, weekly digests, webhook retries, report generation</td>
+      <td>Vercel Cron triggering route handlers; Upstash QStash for queued and delayed work</td>
+      <td>Idempotent handlers keyed by job ID. Extractable to a standalone service if volume demands it.</td>
+    </tr>
+    <tr>
+      <td><strong>Billing service</strong></td>
+      <td>Checkout sessions, subscription lifecycle, donations, invoices</td>
+      <td>Stripe Checkout, Stripe Billing, Customer Portal; signed webhook endpoint</td>
+      <td>Stripe is the source of truth for subscription state; our database holds a read-through mirror.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">4.1 Cross-cutting libraries</h3>
+
+<table>
+  <thead><tr><th style="width: 26%">Concern</th><th style="width: 26%">Choice</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td>Authentication</td><td>Better Auth</td><td>Self-hosted sessions, no per-seat cost, data stays in our Postgres. Clerk is the managed alternative if speed outweighs ownership.</td></tr>
+    <tr><td>ORM / queries</td><td>Drizzle ORM</td><td>SQL-shaped, fully typed, generates plain migrations that survive an ORM swap.</td></tr>
+    <tr><td>Validation</td><td>Zod</td><td>One schema shared by forms, API boundaries and database inserts.</td></tr>
+    <tr><td>Email</td><td>Resend + React Email</td><td>Templates written as components, reviewable in pull requests.</td></tr>
+    <tr><td>Testing</td><td>Vitest, Playwright</td><td>Unit tests on the domain layer; end-to-end on signup, checkout, plan customization.</td></tr>
+    <tr><td>Error tracking</td><td>Sentry</td><td>Source-mapped stack traces across server and browser.</td></tr>
+    <tr><td>Analytics</td><td>Vercel Analytics / Plausible</td><td>Cookieless, keeps the consent banner off the critical path.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">5. Data architecture</h2>
+
+<p>A single PostgreSQL database holds every persistent entity. Payload CMS writes to the same instance in its own schema, so editorial content and application data share one backup, one migration path and one connection pool.</p>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">5.1 Domain model</h3>
+
+<figure style="margin: 18px 0 8px">
+<svg viewBox="0 0 880 560" style="width: 100%; height: auto; display: block; background: #fafbfc; border: 1px solid #d6d9e0">
+  <g font-family="Archivo, sans-serif" font-size="10.5">
+    <rect x="20" y="20" width="196" height="132" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="20" y="20" width="196" height="26" fill="#16181d"/>
+    <text x="118" y="38" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">User</text>
+    <text x="30" y="62" fill="#16181d">id: uuid PK</text>
+    <text x="30" y="79" fill="#16181d">email: citext UNIQUE</text>
+    <text x="30" y="96" fill="#16181d">role: enum</text>
+    <text x="30" y="113" fill="#16181d">locale, timezone</text>
+    <text x="30" y="130" fill="#16181d">createdAt, deletedAt</text>
+    <text x="30" y="146" fill="#6b7280">+ anonymise()</text>
+
+    <rect x="20" y="196" width="196" height="112" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="20" y="196" width="196" height="26" fill="#16181d"/>
+    <text x="118" y="214" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Profile</text>
+    <text x="30" y="238" fill="#16181d">userId: uuid FK</text>
+    <text x="30" y="255" fill="#16181d">heightCm, unitSystem</text>
+    <text x="30" y="272" fill="#16181d">goal: enum</text>
+    <text x="30" y="289" fill="#16181d">experienceLevel</text>
+    <text x="30" y="303" fill="#6b7280">1 : 1 with User</text>
+
+    <rect x="20" y="352" width="196" height="112" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="20" y="352" width="196" height="26" fill="#16181d"/>
+    <text x="118" y="370" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Subscription</text>
+    <text x="30" y="394" fill="#16181d">stripeCustomerId</text>
+    <text x="30" y="411" fill="#16181d">stripeSubId</text>
+    <text x="30" y="428" fill="#16181d">status: enum</text>
+    <text x="30" y="445" fill="#16181d">tier, periodEnd</text>
+    <text x="30" y="459" fill="#6b7280">mirror of Stripe</text>
+
+    <rect x="290" y="20" width="200" height="132" fill="#eef2ff" stroke="#3b6bff" stroke-width="1.5"/>
+    <rect x="290" y="20" width="200" height="26" fill="#3b6bff"/>
+    <text x="390" y="38" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Plan</text>
+    <text x="300" y="62" fill="#16181d">id: uuid PK</text>
+    <text x="300" y="79" fill="#16181d">ownerId: uuid FK</text>
+    <text x="300" y="96" fill="#16181d">templateId: uuid NULL</text>
+    <text x="300" y="113" fill="#16181d">name, daysPerWeek</text>
+    <text x="300" y="130" fill="#16181d">isTemplate: bool</text>
+    <text x="300" y="146" fill="#6b7280">+ duplicateFrom()</text>
+
+    <rect x="290" y="196" width="200" height="112" fill="#eef2ff" stroke="#3b6bff" stroke-width="1.5"/>
+    <rect x="290" y="196" width="200" height="26" fill="#3b6bff"/>
+    <text x="390" y="214" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">PlanDay</text>
+    <text x="300" y="238" fill="#16181d">planId: uuid FK</text>
+    <text x="300" y="255" fill="#16181d">weekday: smallint</text>
+    <text x="300" y="272" fill="#16181d">focus: text</text>
+    <text x="300" y="289" fill="#16181d">isRestDay: bool</text>
+
+    <rect x="290" y="352" width="200" height="130" fill="#eef2ff" stroke="#3b6bff" stroke-width="1.5"/>
+    <rect x="290" y="352" width="200" height="26" fill="#3b6bff"/>
+    <text x="390" y="370" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">PlanItem</text>
+    <text x="300" y="394" fill="#16181d">planDayId: uuid FK</text>
+    <text x="300" y="411" fill="#16181d">exerciseId: uuid FK</text>
+    <text x="300" y="428" fill="#16181d">position: smallint</text>
+    <text x="300" y="445" fill="#16181d">sets, repRange</text>
+    <text x="300" y="462" fill="#16181d">restSeconds</text>
+    <text x="300" y="477" fill="#6b7280">the swap unit</text>
+
+    <rect x="564" y="20" width="200" height="148" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="564" y="20" width="200" height="26" fill="#16181d"/>
+    <text x="664" y="38" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Exercise</text>
+    <text x="574" y="62" fill="#16181d">id: uuid PK</text>
+    <text x="574" y="79" fill="#16181d">slug: text UNIQUE</text>
+    <text x="574" y="96" fill="#16181d">categoryId: uuid FK</text>
+    <text x="574" y="113" fill="#16181d">equipmentKind: enum</text>
+    <text x="574" y="130" fill="#16181d">difficulty: enum</text>
+    <text x="574" y="147" fill="#16181d">cues, mistakes: jsonb</text>
+    <text x="574" y="162" fill="#6b7280">owned by CMS</text>
+
+    <rect x="564" y="196" width="200" height="94" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="564" y="196" width="200" height="26" fill="#16181d"/>
+    <text x="664" y="214" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Category</text>
+    <text x="574" y="238" fill="#16181d">id: uuid PK</text>
+    <text x="574" y="255" fill="#16181d">slug, name</text>
+    <text x="574" y="272" fill="#16181d">muscleGroup: enum</text>
+    <text x="574" y="286" fill="#6b7280">owned by CMS</text>
+
+    <rect x="564" y="330" width="200" height="112" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="564" y="330" width="200" height="26" fill="#16181d"/>
+    <text x="664" y="348" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">WorkoutSession</text>
+    <text x="574" y="372" fill="#16181d">userId, planDayId FK</text>
+    <text x="574" y="389" fill="#16181d">startedAt, endedAt</text>
+    <text x="574" y="406" fill="#16181d">status: enum</text>
+    <text x="574" y="423" fill="#16181d">clientRef: text</text>
+    <text x="574" y="437" fill="#6b7280">idempotency key</text>
+
+    <rect x="564" y="470" width="200" height="76" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="564" y="470" width="200" height="26" fill="#16181d"/>
+    <text x="664" y="488" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">SetLog</text>
+    <text x="574" y="512" fill="#16181d">sessionId, exerciseId</text>
+    <text x="574" y="529" fill="#16181d">setIndex, weightKg, reps</text>
+
+    <rect x="20" y="500" width="196" height="46" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <rect x="20" y="500" width="196" height="26" fill="#16181d"/>
+    <text x="118" y="518" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Measurement</text>
+    <text x="30" y="541" fill="#16181d">userId, takenOn, kind, value</text>
+
+    <rect x="290" y="510" width="200" height="36" fill="#fff" stroke="#16181d" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <text x="390" y="533" font-size="11.5" font-weight="700" text-anchor="middle">Post · Donation · ContactMessage</text>
+
+    <line x1="118" y1="152" x2="118" y2="194" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="130" y="176" fill="#6b7280">1</text>
+    <line x1="118" y1="308" x2="118" y2="350" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="130" y="332" fill="#6b7280">0..1</text>
+    <line x1="118" y1="464" x2="118" y2="498" stroke="#4b5563" stroke-width="1.2"/>
+    <line x1="216" y1="72" x2="288" y2="72" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="250" y="64" fill="#6b7280">1 · *</text>
+    <line x1="390" y1="152" x2="390" y2="194" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="402" y="176" fill="#6b7280">1 · *</text>
+    <line x1="390" y1="308" x2="390" y2="350" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="402" y="332" fill="#6b7280">1 · *</text>
+    <line x1="490" y1="412" x2="562" y2="100" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="520" y="250" fill="#6b7280">*  ·  1</text>
+    <line x1="664" y1="168" x2="664" y2="194" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="676" y="186" fill="#6b7280">*·1</text>
+    <line x1="664" y1="442" x2="664" y2="468" stroke="#4b5563" stroke-width="1.2"/>
+    <text x="676" y="460" fill="#6b7280">1·*</text>
+    <line x1="490" y1="250" x2="562" y2="380" stroke="#4b5563" stroke-width="1.2"/>
+  </g>
+</svg>
+<figcaption style="font-size: 12px; color: #6b7280; margin-top: 7px">Figure 3 — Domain class diagram. Blue entities are user-owned and mutable; white entities are either editorial (CMS-owned) or append-only training records.</figcaption>
+</figure>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">5.2 The plan customization model</h3>
+
+<p>This is the single most important modelling decision in the system, and the one most often got wrong. A user does not "edit the official plan" — a user <strong>owns a copy</strong> of it.</p>
+
+<ol style="margin: 0 0 14px; padding-left: 20px">
+  <li>Editors publish plans with <code>isTemplate = true</code> and no owner.</li>
+  <li>When a member adopts a template, the platform deep-copies the plan, its days and its items into a new row set owned by that member, recording <code>templateId</code> for provenance.</li>
+  <li>The member edits their copy freely — swap an exercise, change sets, move a day, add a rest day.</li>
+  <li>Editing a template afterwards never mutates an adopted copy. Members see a non-blocking "a newer version of this plan is available" prompt.</li>
+</ol>
+
+<p>The alternative — storing a diff against a live template — saves a little storage and costs an enormous amount of correctness. Copy-on-adopt is the correct trade.</p>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">5.3 Database management</h3>
+
+<table>
+  <thead><tr><th style="width: 24%">Concern</th><th>Approach</th></tr></thead>
+  <tbody>
+    <tr><td>Engine</td><td>PostgreSQL 16 on Neon. Serverless scale-to-zero for preview branches; a provisioned instance for production.</td></tr>
+    <tr><td>Migrations</td><td>Drizzle Kit, forward-only, one migration per pull request, applied automatically on deploy. Every migration must be safe to run while the previous release is still serving traffic.</td></tr>
+    <tr><td>Branching</td><td>Each preview deployment gets a Neon database branch seeded from an anonymised snapshot. No developer connects to production data.</td></tr>
+    <tr><td>Backups</td><td>Continuous write-ahead-log archiving with 7-day point-in-time recovery; a nightly logical dump retained 30 days in separate object storage.</td></tr>
+    <tr><td>Restore drill</td><td>Quarterly, into a scratch branch, timed and recorded. A backup that has never been restored is not a backup.</td></tr>
+    <tr><td>Indexing</td><td>Covering indexes on <code>plan_items(plan_day_id, position)</code>, <code>set_logs(session_id)</code>, <code>measurements(user_id, taken_on)</code>; a trigram index on exercise name for search.</td></tr>
+    <tr><td>Connection handling</td><td>Serverless functions connect through Neon's pooler; the ORM opens no long-lived pool of its own.</td></tr>
+    <tr><td>Caching</td><td>Redis (Upstash) for rate-limit counters and session lookups. Library pages are cached at the edge and revalidated by tag when the CMS publishes.</td></tr>
+    <tr><td>Retention</td><td>Training data retained while the account is active. Deletion request: user row anonymised, sessions and measurements hard-deleted within 30 days, financial records kept 7 years as law requires.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">6. Key interaction flows</h2>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 20px 0 8px">6.1 Subscription checkout</h3>
+
+<figure style="margin: 16px 0 8px">
+<svg viewBox="0 0 880 430" style="width: 100%; height: auto; display: block; background: #fafbfc; border: 1px solid #d6d9e0">
+  <defs>
+    <marker id="ah3" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 z" fill="#16181d"/></marker>
+    <marker id="ah3d" markerWidth="8" markerHeight="8" refX="7" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 z" fill="#6b7280"/></marker>
+  </defs>
+  <g font-family="Archivo, sans-serif" font-size="10.5">
+    <rect x="30" y="18" width="110" height="34" fill="#16181d"/><text x="85" y="40" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">Member</text>
+    <rect x="210" y="18" width="130" height="34" fill="#3b6bff"/><text x="275" y="40" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">Member app</text>
+    <rect x="410" y="18" width="130" height="34" fill="#3b6bff"/><text x="475" y="40" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">Billing API</text>
+    <rect x="610" y="18" width="110" height="34" fill="#6b7280"/><text x="665" y="40" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">Stripe</text>
+    <rect x="775" y="18" width="80" height="34" fill="#16181d"/><text x="815" y="40" font-size="11.5" font-weight="700" fill="#fff" text-anchor="middle">Postgres</text>
+
+    <line x1="85" y1="52" x2="85" y2="412" stroke="#9ca3af" stroke-dasharray="4 4"/>
+    <line x1="275" y1="52" x2="275" y2="412" stroke="#9ca3af" stroke-dasharray="4 4"/>
+    <line x1="475" y1="52" x2="475" y2="412" stroke="#9ca3af" stroke-dasharray="4 4"/>
+    <line x1="665" y1="52" x2="665" y2="412" stroke="#9ca3af" stroke-dasharray="4 4"/>
+    <line x1="815" y1="52" x2="815" y2="412" stroke="#9ca3af" stroke-dasharray="4 4"/>
+
+    <line x1="85" y1="82" x2="271" y2="82" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="178" y="76" text-anchor="middle">1. Selects Advanced tier</text>
+
+    <line x1="275" y1="112" x2="471" y2="112" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="373" y="106" text-anchor="middle">2. POST /billing/checkout</text>
+
+    <line x1="475" y1="142" x2="661" y2="142" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="568" y="136" text-anchor="middle">3. Create Checkout Session</text>
+
+    <line x1="665" y1="172" x2="479" y2="172" stroke="#6b7280" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#ah3d)"/>
+    <text x="572" y="166" text-anchor="middle" fill="#6b7280">4. session.url</text>
+
+    <line x1="471" y1="202" x2="279" y2="202" stroke="#6b7280" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#ah3d)"/>
+    <text x="375" y="196" text-anchor="middle" fill="#6b7280">5. 303 redirect</text>
+
+    <line x1="85" y1="232" x2="661" y2="232" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="373" y="226" text-anchor="middle">6. Enters card details on Stripe-hosted page — never on our domain</text>
+
+    <line x1="665" y1="272" x2="479" y2="272" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="572" y="266" text-anchor="middle">7. Webhook: checkout.session.completed</text>
+
+    <rect x="440" y="286" width="70" height="20" fill="#eef2ff" stroke="#3b6bff" stroke-width="1"/>
+    <text x="475" y="300" font-size="9.5" text-anchor="middle" fill="#3b6bff">verify sig</text>
+
+    <line x1="475" y1="326" x2="811" y2="326" stroke="#16181d" stroke-width="1.2" marker-end="url(#ah3)"/>
+    <text x="643" y="320" text-anchor="middle">8. Upsert subscription (idempotent on event.id)</text>
+
+    <line x1="475" y1="362" x2="279" y2="362" stroke="#6b7280" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#ah3d)"/>
+    <text x="377" y="356" text-anchor="middle" fill="#6b7280">9. Revalidate entitlement cache</text>
+
+    <line x1="275" y1="396" x2="89" y2="396" stroke="#6b7280" stroke-width="1.1" stroke-dasharray="4 3" marker-end="url(#ah3d)"/>
+    <text x="182" y="390" text-anchor="middle" fill="#6b7280">10. Advanced features unlocked</text>
+  </g>
+</svg>
+<figcaption style="font-size: 12px; color: #6b7280; margin-top: 7px">Figure 4 — Subscription checkout sequence. Entitlement is granted by the webhook, never by the browser returning to a success URL — a user closing the tab must still receive what they paid for.</figcaption>
+</figure>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">6.2 Other flows of note</h3>
+
+<table>
+  <thead><tr><th style="width: 24%">Flow</th><th>Behaviour</th></tr></thead>
+  <tbody>
+    <tr><td>Registration</td><td>Email + password or OAuth. Account created in a pending state; verification email issued; a free default plan is assigned on first sign-in so the dashboard is never empty.</td></tr>
+    <tr><td>Plan adoption</td><td>Template deep-copied inside one transaction. Failure leaves no partial plan.</td></tr>
+    <tr><td>Exercise swap</td><td>Client sends the target <code>planItemId</code> and replacement <code>exerciseId</code>. The server validates that the replacement targets the same muscle group before writing.</td></tr>
+    <tr><td>Workout logging</td><td>Sets are written to IndexedDB immediately and flushed to the API in batches, keyed by a client-generated <code>clientRef</code> so a retry cannot duplicate a session.</td></tr>
+    <tr><td>Donation</td><td>Stripe Payment Link, no account required. The <code>payment_intent.succeeded</code> webhook records the donation and triggers a receipt.</td></tr>
+    <tr><td>Contact message</td><td>Rate-limited and bot-checked, persisted, then forwarded by email. Persisting first means a mail outage never loses a message.</td></tr>
+    <tr><td>Account deletion</td><td>Queued job: revoke sessions, cancel the Stripe subscription, anonymise the user row, hard-delete training data. Confirmation email on completion.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">7. Security and compliance</h2>
+
+<table>
+  <thead><tr><th style="width: 24%">Area</th><th>Control</th></tr></thead>
+  <tbody>
+    <tr><td>Authentication</td><td>Argon2id password hashing, HTTP-only <code>SameSite=Lax</code> session cookies, rotation on privilege change, optional TOTP second factor for administrators.</td></tr>
+    <tr><td>Authorization</td><td>Four roles — <code>visitor</code>, <code>member</code>, <code>editor</code>, <code>admin</code>. Enforced server-side on every request. Row-level ownership checks on all plan and log mutations.</td></tr>
+    <tr><td>Transport</td><td>TLS 1.3 only, HSTS with preload, secure cookies.</td></tr>
+    <tr><td>Headers</td><td>Strict Content-Security-Policy with nonces, <code>X-Content-Type-Options</code>, <code>Referrer-Policy</code>, <code>Permissions-Policy</code>.</td></tr>
+    <tr><td>Input handling</td><td>Zod validation at every boundary; parameterised queries only; uploads restricted by MIME type, size and re-encoding.</td></tr>
+    <tr><td>Rate limiting</td><td>Per-IP and per-account sliding windows on auth, contact and write endpoints, backed by Redis.</td></tr>
+    <tr><td>Secrets</td><td>Platform environment variables, never in the repository. Rotated on staff change. No secret is readable by a preview deployment.</td></tr>
+    <tr><td>Payments</td><td>Stripe-hosted checkout. No card data touches our infrastructure, placing us in PCI DSS SAQ-A scope.</td></tr>
+    <tr><td>GDPR</td><td>Lawful basis recorded per processing purpose; self-service data export and deletion; a data-processing register; signed processor agreements with every subprocessor; EU data residency for the primary database.</td></tr>
+    <tr><td>Health data</td><td>Body measurements are treated as sensitive: encrypted at rest, excluded from analytics events, never included in support exports.</td></tr>
+    <tr><td>Disclaimer</td><td>The medical disclaimer is a required, versioned, timestamp-accepted document, not a footer line.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">8. Hosting and infrastructure</h2>
+
+<figure style="margin: 18px 0 8px">
+<svg viewBox="0 0 880 400" style="width: 100%; height: auto; display: block; background: #fafbfc; border: 1px solid #d6d9e0">
+  <defs><marker id="ah4" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#4b5563"/></marker></defs>
+  <g font-family="Archivo, sans-serif">
+    <rect x="20" y="30" width="150" height="70" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="95" y="58" font-size="13" font-weight="700" text-anchor="middle">Browser</text>
+    <text x="95" y="78" font-size="10.5" fill="#6b7280" text-anchor="middle">Mobile / desktop</text>
+
+    <rect x="220" y="20" width="176" height="90" rx="10" fill="#fff" stroke="#f38020" stroke-width="1.6"/>
+    <text x="308" y="46" font-size="13" font-weight="700" text-anchor="middle">Cloudflare</text>
+    <text x="308" y="66" font-size="10.5" fill="#6b7280" text-anchor="middle">Authoritative DNS</text>
+    <text x="308" y="82" font-size="10.5" fill="#6b7280" text-anchor="middle">WAF, DDoS, bot rules</text>
+    <text x="308" y="98" font-size="10.5" fill="#6b7280" text-anchor="middle">TLS termination</text>
+
+    <rect x="446" y="14" width="196" height="106" rx="10" fill="#eef2ff" stroke="#3b6bff" stroke-width="1.5"/>
+    <text x="544" y="40" font-size="13" font-weight="700" text-anchor="middle">Vercel — Edge network</text>
+    <text x="544" y="60" font-size="10.5" fill="#4b5563" text-anchor="middle">Static assets, ISR cache</text>
+    <text x="544" y="76" font-size="10.5" fill="#4b5563" text-anchor="middle">Middleware, routing</text>
+    <text x="544" y="94" font-size="10.5" fill="#4b5563" text-anchor="middle">Serverless functions (fra1)</text>
+    <text x="544" y="110" font-size="10.5" fill="#4b5563" text-anchor="middle">Cron triggers</text>
+
+    <rect x="692" y="14" width="164" height="54" rx="10" fill="#fff" stroke="#16181d" stroke-width="1.4"/>
+    <text x="774" y="36" font-size="12.5" font-weight="700" text-anchor="middle">Cloudflare R2</text>
+    <text x="774" y="55" font-size="10.5" fill="#6b7280" text-anchor="middle">Media + CDN</text>
+
+    <rect x="446" y="160" width="196" height="70" rx="10" fill="#16181d"/>
+    <text x="544" y="186" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Neon PostgreSQL</text>
+    <text x="544" y="206" font-size="10.5" fill="#9ca3af" text-anchor="middle">eu-central-1, pooled</text>
+    <text x="544" y="222" font-size="10.5" fill="#9ca3af" text-anchor="middle">PITR 7 days</text>
+
+    <rect x="692" y="160" width="164" height="70" rx="10" fill="#16181d"/>
+    <text x="774" y="186" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">Upstash Redis</text>
+    <text x="774" y="206" font-size="10.5" fill="#9ca3af" text-anchor="middle">Rate limits, cache</text>
+    <text x="774" y="222" font-size="10.5" fill="#9ca3af" text-anchor="middle">QStash queue</text>
+
+    <rect x="220" y="160" width="176" height="70" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="308" y="186" font-size="12.5" font-weight="700" text-anchor="middle">Stripe</text>
+    <text x="308" y="206" font-size="10.5" fill="#6b7280" text-anchor="middle">Billing, webhooks</text>
+    <text x="308" y="222" font-size="10.5" fill="#6b7280" text-anchor="middle">Customer Portal</text>
+
+    <rect x="20" y="160" width="176" height="70" rx="10" fill="#f2f3f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="108" y="186" font-size="12.5" font-weight="700" text-anchor="middle">Resend</text>
+    <text x="108" y="206" font-size="10.5" fill="#6b7280" text-anchor="middle">Outbound email</text>
+    <text x="108" y="222" font-size="10.5" fill="#6b7280" text-anchor="middle">SPF / DKIM aligned</text>
+
+    <rect x="20" y="288" width="836" height="86" rx="10" fill="none" stroke="#9ca3af" stroke-width="1.2" stroke-dasharray="6 4"/>
+    <text x="38" y="310" font-size="11.5" font-weight="700" fill="#4b5563">SUPPORTING SERVICES</text>
+    <text x="38" y="332" font-size="11" fill="#6b7280">GitHub — source of truth, Actions CI, branch protection, Dependabot</text>
+    <text x="38" y="350" font-size="11" fill="#6b7280">Sentry — error tracking and release health · Better Stack — uptime and on-call alerting</text>
+    <text x="38" y="368" font-size="11" fill="#6b7280">Plausible — privacy-preserving product analytics · 1Password — secret custody</text>
+
+    <line x1="170" y1="65" x2="216" y2="65" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="396" y1="65" x2="442" y2="65" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="642" y1="48" x2="688" y2="41" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="544" y1="120" x2="544" y2="158" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="640" y1="112" x2="700" y2="158" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="450" y1="112" x2="360" y2="158" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+    <line x1="446" y1="98" x2="196" y2="172" stroke="#4b5563" stroke-width="1.3" marker-end="url(#ah4)"/>
+  </g>
+</svg>
+<figcaption style="font-size: 12px; color: #6b7280; margin-top: 7px">Figure 5 — Deployment view. Every component is a managed service; the team operates no servers, no container orchestration and no database host.</figcaption>
+</figure>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">8.1 Environments</h3>
+
+<table>
+  <thead><tr><th style="width: 16%">Environment</th><th style="width: 26%">URL</th><th style="width: 22%">Data</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>Production</td><td><code>groundwork.training</code></td><td>Live Postgres, live Stripe</td><td>Public traffic. Deploys only from <code>main</code>, after CI passes.</td></tr>
+    <tr><td>Staging</td><td><code>staging.groundwork.training</code></td><td>Anonymised snapshot, Stripe test mode</td><td>Release candidate verification and stakeholder review.</td></tr>
+    <tr><td>Preview</td><td><code>pr-&lt;n&gt;.groundwork.training</code></td><td>Ephemeral Neon branch</td><td>One isolated environment per pull request; destroyed on merge.</td></tr>
+    <tr><td>Local</td><td><code>localhost:3000</code></td><td>Docker Postgres, seeded</td><td>Development. Never connects to production.</td></tr>
+  </tbody>
+</table>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">8.2 Deployment pipeline</h3>
+
+<p>Trunk-based development. A pull request triggers lint, type-check, unit tests, an accessibility scan and a Playwright end-to-end run against its preview environment. Merging to <code>main</code> promotes the same build artifact to production. Rollback is an instant alias change to the previous deployment; a database migration that cannot be rolled back must ship as an expand-and-contract pair across two releases.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">9. DNS management</h2>
+
+<p>The registrar holds the domain; Cloudflare is the authoritative nameserver and the single place any record is changed. Registrar lock and two-factor authentication are mandatory on the registrar account, and the domain is registered for five years to remove renewal risk.</p>
+
+<table>
+  <thead><tr><th style="width: 22%">Record</th><th style="width: 10%">Type</th><th style="width: 30%">Value</th><th style="width: 12%">Proxy</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>groundwork.training</code></td><td>A / AAAA</td><td>Vercel apex addresses</td><td>Proxied</td><td>Apex web traffic</td></tr>
+    <tr><td><code>www</code></td><td>CNAME</td><td><code>cname.vercel-dns.com</code></td><td>Proxied</td><td>Redirects to apex</td></tr>
+    <tr><td><code>staging</code></td><td>CNAME</td><td><code>cname.vercel-dns.com</code></td><td>Proxied</td><td>Staging environment</td></tr>
+    <tr><td><code>*.preview</code></td><td>CNAME</td><td><code>cname.vercel-dns.com</code></td><td>DNS only</td><td>Per-pull-request previews</td></tr>
+    <tr><td><code>cdn</code></td><td>CNAME</td><td>R2 public bucket</td><td>Proxied</td><td>Media delivery</td></tr>
+    <tr><td><code>@</code></td><td>MX</td><td>Mail provider, priority 1 / 5</td><td>DNS only</td><td>Inbound mail</td></tr>
+    <tr><td><code>@</code></td><td>TXT</td><td><code>v=spf1 include:resend.com ~all</code></td><td>DNS only</td><td>Sender authorisation</td></tr>
+    <tr><td><code>resend._domainkey</code></td><td>TXT</td><td>DKIM public key</td><td>DNS only</td><td>Message signing</td></tr>
+    <tr><td><code>_dmarc</code></td><td>TXT</td><td><code>v=DMARC1; p=quarantine; rua=…</code></td><td>DNS only</td><td>Policy and reporting</td></tr>
+    <tr><td><code>@</code></td><td>CAA</td><td><code>0 issue "letsencrypt.org"</code></td><td>DNS only</td><td>Restricts certificate issuance</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px"><strong>Operating rules.</strong> TTL stays at 300 seconds during any migration and returns to 3600 afterwards. DNSSEC is enabled. Records are changed only through a reviewed pull request against the Terraform definition — never by hand in a dashboard, because a hand-edited zone has no history and no reviewer. DMARC starts at <code>p=none</code> for two weeks of report collection, then moves to <code>quarantine</code>, then to <code>reject</code>.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">10. Observability and operations</h2>
+
+<table>
+  <thead><tr><th style="width: 22%">Signal</th><th style="width: 26%">Tool</th><th>What it answers</th></tr></thead>
+  <tbody>
+    <tr><td>Errors</td><td>Sentry</td><td>What broke, in which release, for how many users.</td></tr>
+    <tr><td>Availability</td><td>Better Stack, 1-minute checks</td><td>Is the site reachable from outside our provider.</td></tr>
+    <tr><td>Performance</td><td>Vercel Speed Insights</td><td>Real-user Core Web Vitals by route and device.</td></tr>
+    <tr><td>Business events</td><td>Structured logs to a queryable sink</td><td>Signups, plan adoptions, checkouts, cancellations, donations.</td></tr>
+    <tr><td>Payment integrity</td><td>Stripe dashboard + webhook failure alert</td><td>Any event we failed to process within 15 minutes.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px"><strong>Alerting policy.</strong> Three conditions page a human: the site is down, the webhook processor is failing, or the error rate exceeds 2% of requests. Everything else is a daily digest. An alert that fires often and is routinely ignored is worse than no alert.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">11. Delivery plan</h2>
+
+<table>
+  <thead><tr><th style="width: 12%">Phase</th><th style="width: 26%">Scope</th><th style="width: 14%">Duration</th><th>Exit criteria</th></tr></thead>
+  <tbody>
+    <tr><td><strong>0 — Foundation</strong></td><td>Repository, CI, environments, DNS, schema, design system</td><td>2 weeks</td><td>An empty app deploys to production through the full pipeline.</td></tr>
+    <tr><td><strong>1 — Content</strong></td><td>Payload CMS, exercise and category models, public library, blog</td><td>3 weeks</td><td>An editor publishes an exercise and it appears live without a deployment.</td></tr>
+    <tr><td><strong>2 — Identity</strong></td><td>Registration, login, OAuth, profile CRUD, roles, account deletion</td><td>2 weeks</td><td>A user can create, use, export and delete an account unaided.</td></tr>
+    <tr><td><strong>3 — Plans</strong></td><td>Templates, adoption, customization, exercise swapping, scheduling</td><td>4 weeks</td><td>A member builds a personal week and it survives a template edit.</td></tr>
+    <tr><td><strong>4 — Training</strong></td><td>Workout mode, rest timer, set logging, offline sync, progress charts</td><td>3 weeks</td><td>A full session is logged on a phone in airplane mode and syncs later.</td></tr>
+    <tr><td><strong>5 — Money</strong></td><td>Donations, subscription tier, entitlements, customer portal</td><td>2 weeks</td><td>Test-mode purchase grants access; cancellation revokes it.</td></tr>
+    <tr><td><strong>6 — Comms</strong></td><td>Contact form, transactional email, reminders, weekly digest</td><td>2 weeks</td><td>Mail passes SPF, DKIM and DMARC alignment checks.</td></tr>
+    <tr><td><strong>7 — Hardening</strong></td><td>Accessibility audit, load test, penetration review, restore drill, launch</td><td>2 weeks</td><td>No critical findings; a restore completes inside the 4-hour target.</td></tr>
+  </tbody>
+</table>
+
+<p style="margin-top: 12px">Approximately 20 weeks of engineering for a small team. Phases 1 and 2 can run in parallel with two developers; phase 3 cannot be parallelised meaningfully and is the critical path.</p>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">12. Cost model</h2>
+
+<table>
+  <thead><tr><th style="width: 28%">Service</th><th style="width: 22%">Launch (&lt; 1k users)</th><th style="width: 22%">Growth (~25k users)</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Vercel</td><td>€0 – 20</td><td>€20 – 150</td><td>Pro plan required for team seats and analytics.</td></tr>
+    <tr><td>Neon PostgreSQL</td><td>€0 – 19</td><td>€60 – 120</td><td>Scales with compute hours and storage.</td></tr>
+    <tr><td>Upstash Redis / QStash</td><td>€0 – 10</td><td>€10 – 40</td><td>Per-request pricing.</td></tr>
+    <tr><td>Cloudflare R2 + DNS</td><td>€0 – 5</td><td>€10 – 30</td><td>No egress fees, which matters for image-heavy pages.</td></tr>
+    <tr><td>Resend</td><td>€0</td><td>€20</td><td>Free to 3,000 messages per month.</td></tr>
+    <tr><td>Sentry, Better Stack, Plausible</td><td>€0 – 25</td><td>€40 – 70</td><td>Free tiers cover launch.</td></tr>
+    <tr><td>Stripe</td><td>Per transaction</td><td>Per transaction</td><td>1.5% + €0.25 European cards; no fixed fee.</td></tr>
+    <tr><th>Total, monthly</th><th>€25 – 80</th><th>€160 – 430</th><td>Excludes payment processing and domain renewal.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">13. Risks and decisions</h2>
+
+<table>
+  <thead><tr><th style="width: 26%">Risk</th><th style="width: 12%">Severity</th><th>Mitigation</th></tr></thead>
+  <tbody>
+    <tr><td>Free and paid tiers pull the product in opposite directions</td><td>High</td><td>Decide the commercial position before the pricing page is designed. Recommended: everything in this document free, with an optional supporter tier that adds convenience — not access.</td></tr>
+    <tr><td>Plan customization scope creep</td><td>High</td><td>Ship adoption and single-exercise swapping first. A full drag-and-drop builder is a separate, later milestone.</td></tr>
+    <tr><td>Platform lock-in to Vercel</td><td>Medium</td><td>Next.js runs on any Node host. Keep no Vercel-only primitive in the domain layer; cron and queue triggers stay thin HTTP handlers.</td></tr>
+    <tr><td>Exercise media licensing</td><td>Medium</td><td>Commission or license imagery explicitly. Never use unlicensed stock or generated likenesses for instructional content.</td></tr>
+    <tr><td>Medical liability</td><td>Medium</td><td>Versioned, explicitly accepted disclaimer. No diagnostic claims. Legal review before launch.</td></tr>
+    <tr><td>Solo maintainer risk</td><td>Medium</td><td>Documented runbooks, no undocumented manual steps, credentials in shared custody.</td></tr>
+  </tbody>
+</table>
+
+<h3 style="font-size: 16px; font-weight: 700; margin: 22px 0 8px">13.1 Decisions taken</h3>
+
+<table>
+  <thead><tr><th style="width: 8%">ID</th><th style="width: 30%">Decision</th><th>Reasoning</th></tr></thead>
+  <tbody>
+    <tr><td>ADR-1</td><td>Modular monolith over microservices</td><td>Team size makes distributed operations a net loss. Boundaries are enforced in code, not by the network.</td></tr>
+    <tr><td>ADR-2</td><td>PostgreSQL over a document store</td><td>The domain is relational throughout; the joins are the product.</td></tr>
+    <tr><td>ADR-3</td><td>Payload CMS over a bespoke admin</td><td>Saves roughly six weeks and delivers versioning, drafts and media handling for free.</td></tr>
+    <tr><td>ADR-4</td><td>Copy-on-adopt for plans</td><td>Guarantees a member's plan never changes underneath them.</td></tr>
+    <tr><td>ADR-5</td><td>Stripe-hosted checkout</td><td>Reduces PCI scope to the minimum and removes card handling from the codebase entirely.</td></tr>
+    <tr><td>ADR-6</td><td>Offline-first set logging</td><td>Gyms have poor signal; a lost session is the fastest way to lose a user.</td></tr>
+  </tbody>
+</table>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">Appendix A — Repository structure</h2>
+
+<pre style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; line-height: 1.65; background: #f2f3f6; border: 1px solid #d6d9e0; padding: 14px 16px; margin: 8px 0 0; overflow-x: auto; white-space: pre-wrap">groundwork/
+├─ apps/web/                 Next.js application
+│  ├─ app/(public)/          Marketing, library, blog
+│  ├─ app/(member)/          Authenticated product
+│  ├─ app/(payload)/admin/   CMS back office
+│  └─ app/api/               Route handlers, webhooks
+├─ packages/domain/          Pure business logic, no I/O
+├─ packages/db/              Drizzle schema, migrations, seeds
+├─ packages/ui/              Design-system components
+├─ packages/email/           React Email templates
+├─ infra/                    Terraform: DNS, buckets, alerts
+└─ docs/                     ADRs, runbooks, this document</pre>
+
+<h2 style="font-size: 22px; letter-spacing: -0.02em; font-weight: 800; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #d6d9e0">Appendix B — Glossary</h2>
+
+<table>
+  <thead><tr><th style="width: 24%">Term</th><th>Definition</th></tr></thead>
+  <tbody>
+    <tr><td>Entitlement</td><td>A capability granted to an account by its subscription state, resolved server-side on every protected request.</td></tr>
+    <tr><td>Plan template</td><td>An editorially published plan with no owner, available for members to adopt.</td></tr>
+    <tr><td>Adoption</td><td>The transactional deep-copy of a template into a member-owned plan.</td></tr>
+    <tr><td>Expand-and-contract</td><td>A two-release migration pattern: add the new column, backfill and dual-write, then remove the old one.</td></tr>
+    <tr><td>RPO / RTO</td><td>Maximum tolerable data loss / maximum tolerable downtime during recovery.</td></tr>
+  </tbody>
+</table>
+
+<div style="margin-top: 34px; padding-top: 14px; border-top: 2px solid #16181d; font-size: 11.5px; color: #6b7280">
+  GW-ARCH-001 · Version 1.0 Draft · Groundwork Training · Internal — not for distribution
+</div>
+
+</div>
+
+</doc-page>
+
+</x-dc>
+</body>
+</html>

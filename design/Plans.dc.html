@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/styles.css">
+<script src="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/_ds_bundle.js"></script>
+<script src="./data.js"></script>
+<script src="./image-slot.js"></script>
+<script src="./muscle-map.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f4f6fb; --dim: #9aa3b8; --faint: #6b7488;
+  --bg0: #0a0c12; --bg1: #10131c; --bg2: #161a26; --line: #232838;
+  --blue: #3b6bff; --blue-soft: rgba(59,107,255,0.16); --gold: #ffd14a;
+}
+body { margin: 0; background: var(--bg0); }
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--blue); }
+::selection { background: var(--blue); color: #fff; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+image-slot::part(empty), image-slot::part(ring) { opacity: 0.25 }
+
+@media (max-width: 640px) {
+  .rail { overflow-x: auto; flex-wrap: nowrap !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .rail::-webkit-scrollbar { display: none; }
+  .gutter { padding-left: 16px !important; padding-right: 16px !important; }
+  .hero-pad { padding: 20px !important; }
+}
+
+</style>
+</helmet>
+
+<div style="font-family: var(--font-body); background: var(--bg0); color: var(--ink); min-height: 100vh; overflow-x: hidden">
+
+  <div style="position: sticky; top: 0; z-index: 50; background: rgba(10,12,18,0.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line)">
+    <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px">
+      <a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px">
+        <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--blue); display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff">G</span>
+        Groundwork
+      </a>
+      <div style="flex: 1"></div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px">
+        <a href="Home.dc.html#library" style="padding: 9px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--dim)" style-hover="background: var(--bg2); color: var(--ink)">Exercises</a>
+        <a href="Home.dc.html#progress" style="padding: 9px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--dim)" style-hover="background: var(--bg2); color: var(--ink)">Progress</a>
+        <a href="Training Program.dc.html" style="margin-left: 6px; padding: 11px 20px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap" style-hover="background: #2a57e6; color: #fff">Training app</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 40px 20px 0">
+    <div style="align-self: flex-start; display: inline-block; padding: 7px 14px; border-radius: 999px; background: var(--blue-soft); color: #93aaff; font-size: 12.5px; font-weight: 700; margin-bottom: 14px; white-space: nowrap">Create your own plan</div>
+    <h1 style="font-size: clamp(34px, 6vw, 60px); line-height: 1.02; letter-spacing: -0.04em; font-weight: 800; margin: 0 0 14px">Pick the week you can keep</h1>
+    <p style="font-size: 17px; line-height: 1.55; color: var(--dim); max-width: 56ch; margin: 0">Three recommended weeks, sorted by how much time you have. Choose one, then swap any exercise for another from the same body part — with or without equipment.</p>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 26px 20px 0">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 14px">
+      <sc-for list="{{ planCards }}" as="p" hint-placeholder-count="3">
+        <button type="button" id="{{ p.id }}" onClick="{{ p.pick }}" style="cursor: pointer; text-align: left; font-family: var(--font-body); color: var(--ink); background: {{ p.bg }}; border: 1px solid {{ p.border }}; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 10px; min-height: 210px; box-shadow: {{ p.shadow }}; transition: all 0.2s ease">
+          <span style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+            <span style="font-size: 12.5px; font-weight: 700; color: {{ p.metaFg }}; white-space: nowrap">{{ p.commitment }}</span>
+            <span style="width: 20px; height: 20px; border-radius: 999px; border: 2px solid {{ p.dotBorder }}; background: {{ p.dotBg }}"></span>
+          </span>
+          <span style="font-size: 24px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">{{ p.name }}</span>
+          <span style="font-size: 14.5px; line-height: 1.5; color: {{ p.bodyFg }}">{{ p.who }}</span>
+          <span style="flex: 1"></span>
+          <span style="font-size: 13.5px; font-weight: 700; color: {{ p.actionFg }}">{{ p.action }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 44px 20px 0">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 18px">
+      <h2 style="font-size: clamp(22px, 3.2vw, 32px); letter-spacing: -0.03em; font-weight: 800; margin: 0">{{ plan.name }}</h2>
+      <span style="font-size: 14px; color: var(--faint)">{{ plan.commitment }}</span>
+      <span style="flex: 1"></span>
+      <span style="padding: 6px 12px; border-radius: 999px; background: {{ plan.levelBg }}; color: {{ plan.levelFg }}; font-size: 12px; font-weight: 800; white-space: nowrap">{{ plan.level }}</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr)); gap: 14px">
+      <sc-for list="{{ planDays }}" as="d" hint-placeholder-count="4">
+        <div style="background: {{ d.bg }}; border: 1px solid {{ d.border }}; border-radius: 20px; overflow: hidden; display: flex; flex-direction: column">
+          <div style="position: relative; height: 132px; background: radial-gradient(70% 70% at 50% 45%, rgba(59,107,255,0.14) 0%, rgba(22,26,38,0) 70%), var(--bg2); opacity: {{ d.photoOpacity }}; padding: 10px 0">
+            <muscle-map group="{{ d.target }}" style="display:block;height:100%"></muscle-map>
+          </div>
+          <div style="padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+              <span style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">{{ d.day }}</span>
+              <span style="font-size: 11.5px; font-weight: 700; color: {{ d.tone }}">{{ d.tag }}</span>
+            </div>
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--dim)">{{ d.focus }}</div>
+            <div style="display: flex; flex-direction: column; gap: 7px; margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--line)">
+              <sc-for list="{{ d.items }}" as="i" hint-placeholder-count="4">
+                <div style="font-size: 13.5px; line-height: 1.45; color: var(--dim)">{{ i }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 44px 20px 0">
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 18px; margin-bottom: 16px">
+      <h2 style="font-size: clamp(20px, 2.8vw, 28px); letter-spacing: -0.025em; font-weight: 800; margin: 0">Swap an exercise</h2>
+      <span style="font-size: 13.5px; color: var(--faint)">{{ swapNote }}</span>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 16px">
+      <div class="rail" style="display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--line)">
+        <sc-for list="{{ swapTabs }}" as="t" hint-placeholder-count="6">
+          <button type="button" onClick="{{ t.pick }}" style="cursor: pointer; border: 0; padding: 10px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13.5px; font-weight: 700; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}; transition: all 0.2s ease">{{ t.name }}</button>
+        </sc-for>
+      </div>
+      <div class="rail" style="display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--line)">
+        <sc-for list="{{ swapKit }}" as="k" hint-placeholder-count="3">
+          <button type="button" onClick="{{ k.pick }}" style="cursor: pointer; border: 0; padding: 10px 16px; border-radius: 999px; font-family: var(--font-body); font-size: 13.5px; font-weight: 700; white-space: nowrap; background: {{ k.bg }}; color: {{ k.fg }}; transition: all 0.2s ease">{{ k.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 12px">
+      <sc-for list="{{ swapList }}" as="e" hint-placeholder-count="6">
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s ease" style-hover="border-color: var(--blue)">
+          <span style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+            <span style="font-size: 16px; font-weight: 800; line-height: 1.25; letter-spacing: -0.015em">{{ e.name }}</span>
+            <span style="padding: 4px 9px; border-radius: 999px; background: {{ e.levelBg }}; color: {{ e.levelFg }}; font-size: 10.5px; font-weight: 800; white-space: nowrap">{{ e.level }}</span>
+          </span>
+          <span style="font-size: 13px; color: var(--faint)">{{ e.equipment }}</span>
+          <span style="font-size: 14.5px; font-weight: 800; margin-top: 2px">{{ e.dose }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 48px 20px 0">
+    <div style="border-radius: 24px; padding: clamp(24px, 4vw, 40px); background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); box-shadow: 0 18px 40px rgba(59,107,255,0.28); display: flex; flex-wrap: wrap; align-items: center; gap: 20px">
+      <div style="flex: 1 1 300px; min-width: 0">
+        <div style="font-size: clamp(24px, 4vw, 36px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">Run it in the app</div>
+        <p style="font-size: 15.5px; line-height: 1.55; margin: 10px 0 0; max-width: 48ch; opacity: 0.9">The five-day program is already loaded, with a rest timer, set logging and progress charts. Free, no account.</p>
+      </div>
+      <a href="Training Program.dc.html" style="padding: 15px 24px; border-radius: 14px; background: #0a0c12; color: #fff; font-size: 14.5px; font-weight: 700; white-space: nowrap" style-hover="background: #000; color: #fff">Open training app →</a>
+    </div>
+  </div>
+
+  <div style="max-width: 1240px; margin: 48px auto 0; padding: 24px 20px 44px; border-top: 1px solid var(--line)">
+    <div style="font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 8px">Disclaimer</div>
+    <p style="font-size: 12.5px; line-height: 1.65; margin: 0; max-width: 86ch; color: var(--faint)">This training program is designed for general fitness education. Start with manageable weights, prioritize controlled technique, and stop if you experience sharp or unusual pain. Consult a qualified professional if you have an injury, medical condition, or are unsure whether an exercise is appropriate for you.</p>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240}}">
+const LEVEL_STYLE = {
+  LOW: { bg: 'rgba(72,200,140,0.18)', fg: '#5fd9a4' },
+  MEDIUM: { bg: 'rgba(255,209,74,0.18)', fg: '#ffd14a' },
+  ADVANCED: { bg: 'rgba(255,92,92,0.18)', fg: '#ff7a7a' }
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let sel = null;
+    try { sel = (location.hash || '').replace('#', '') || null; } catch (e) {}
+    this.state = { plan: sel, swapCat: 'chest', swapKit: 'all' };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const data = window.FIT || { categories: [], exercises: [], plans: [] };
+    const plans = data.plans;
+    const active = plans.find(p => p.id === s.plan) || plans[1] || plans[0] || { id: '', name: '', commitment: '', level: 'LOW', days: [] };
+    const als = LEVEL_STYLE[active.level] || LEVEL_STYLE.LOW;
+    const swaps = data.exercises.filter(e => e.cat === s.swapCat && (s.swapKit === 'all' || e.kit === s.swapKit));
+    const pill = (on) => ({ bg: on ? '#3b6bff' : 'transparent', fg: on ? '#fff' : 'var(--dim)' });
+
+    return {
+      planCards: plans.map(p => {
+        const on = p.id === active.id;
+        return {
+          id: p.id, name: p.name, commitment: p.commitment, who: p.who,
+          bg: on ? 'linear-gradient(150deg, #2a57e6 0%, #3b6bff 100%)' : 'var(--bg1)',
+          border: on ? '#3b6bff' : 'var(--line)',
+          shadow: on ? '0 16px 36px rgba(59,107,255,0.3)' : 'none',
+          metaFg: on ? 'rgba(255,255,255,0.85)' : 'var(--faint)',
+          bodyFg: on ? 'rgba(255,255,255,0.9)' : 'var(--dim)',
+          actionFg: on ? '#fff' : 'var(--blue)',
+          dotBorder: on ? '#fff' : 'var(--line)',
+          dotBg: on ? '#fff' : 'transparent',
+          action: on ? 'Selected — shown below' : 'Choose this week →',
+          pick: () => this.setState({ plan: p.id })
+        };
+      }),
+      plan: {
+        name: active.name, commitment: active.commitment,
+        level: active.level, levelBg: als.bg, levelFg: als.fg
+      },
+      planDays: (active.days || []).map((d, i) => {
+        const rest = /rest|recovery|other/i.test(d.focus + ' ' + d.day);
+        return {
+          day: d.day, focus: d.focus, items: d.items,
+          target: (function () {
+            const f = (d.focus + ' ' + (d.items || []).join(' ')).toLowerCase();
+            if (rest) return 'fullbody';
+            if (/leg|squat|quad|calf/.test(f)) return 'legs';
+            if (/pull|back|row|lat|bicep/.test(f)) return 'back';
+            if (/push|chest|press|shoulder|tricep/.test(f)) return 'chest';
+            return 'fullbody';
+          })(),
+          bg: 'var(--bg1)', border: rest ? 'var(--line)' : 'var(--line)',
+          photoOpacity: rest ? '0.4' : '1',
+          tag: rest ? 'Recovery' : 'Training',
+          tone: rest ? 'var(--faint)' : 'var(--gold)'
+        };
+      }),
+
+      swapNote: swaps.length + ' options in this body part',
+      swapTabs: data.categories.map(c =>
+        Object.assign({ name: c.name, pick: () => this.setState({ swapCat: c.id }) }, pill(c.id === s.swapCat))),
+      swapKit: [['all', 'All'], ['tools', 'With equipment'], ['bodyweight', 'No equipment']].map(([k, label]) =>
+        Object.assign({ label, pick: () => this.setState({ swapKit: k }) }, pill(s.swapKit === k))),
+      swapList: swaps.map(e => {
+        const ls = LEVEL_STYLE[e.level] || LEVEL_STYLE.LOW;
+        return { name: e.name, equipment: e.equipment, level: e.level, levelBg: ls.bg, levelFg: ls.fg, dose: e.sets + ' × ' + e.reps };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

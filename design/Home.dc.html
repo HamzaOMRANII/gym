@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/styles.css">
+<script src="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/_ds_bundle.js"></script>
+<script src="./data.js"></script>
+<script src="./image-slot.js"></script>
+<script src="./muscle-map.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f4f6fb; --dim: #9aa3b8; --faint: #6b7488;
+  --bg0: #0a0c12; --bg1: #10131c; --bg2: #161a26; --line: #232838;
+  --blue: #3b6bff; --blue-soft: rgba(59,107,255,0.16);
+  --gold: #ffd14a;
+}
+body { margin: 0; background: var(--bg0); }
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--blue); }
+::selection { background: var(--blue); color: #fff; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+image-slot::part(empty), image-slot::part(ring) { opacity: 0.25 }
+
+@media (max-width: 640px) {
+  .rail { overflow-x: auto; flex-wrap: nowrap !important; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .rail::-webkit-scrollbar { display: none; }
+  .gutter { padding-left: 16px !important; padding-right: 16px !important; }
+  .hero-pad { padding: 20px !important; }
+}
+
+</style>
+</helmet>
+
+<div style="font-family: var(--font-body); background: var(--bg0); color: var(--ink); overflow-x: hidden">
+
+  <div style="position: sticky; top: 0; z-index: 50; background: rgba(10,12,18,0.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line)">
+    <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px">
+      <a href="#top" style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; letter-spacing: -0.01em">
+        <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--blue); display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff">G</span>
+        Groundwork
+      </a>
+      <div style="flex: 1"></div>
+      <div class="rail" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px">
+        <sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="4">
+          <a href="{{ n.href }}" style="padding: 9px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--dim)" style-hover="background: var(--bg2); color: var(--ink)">{{ n.label }}</a>
+        </sc-for>
+        <a href="Plans.dc.html" style="margin-left: 6px; padding: 11px 20px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap; box-shadow: 0 8px 22px rgba(59,107,255,0.35)" style-hover="background: #2a57e6; color: #fff">Get your plan</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="top" class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 28px 20px 0">
+    <div style="position: relative; border-radius: 28px; overflow: hidden; background: var(--bg1); border: 1px solid var(--line); min-height: min(78vh, 720px); display: flex; align-items: flex-end">
+      <div style="position: absolute; inset: 0">
+        <image-slot id="hero-photo" shape="rect" fit="cover" placeholder=""></image-slot>
+      </div>
+      <div style="position: absolute; inset: 0; background: radial-gradient(120% 80% at 72% 40%, rgba(59,107,255,0.30) 0%, rgba(10,12,18,0) 60%), linear-gradient(180deg, rgba(10,12,18,0.55) 0%, rgba(10,12,18,0.72) 45%, rgba(10,12,18,0.97) 100%); pointer-events: none"></div>
+      <div class="hero-pad" style="position: relative; padding: clamp(24px, 5vw, 56px); display: flex; flex-direction: column; gap: 20px; max-width: 780px">
+        <div style="display: inline-flex; align-items: center; gap: 10px; align-self: flex-start; padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); backdrop-filter: blur(8px); font-size: 13px; font-weight: 600; white-space: nowrap">
+          <span style="width: 7px; height: 7px; border-radius: 999px; background: var(--gold)"></span>
+          {{ slide.kicker }}
+        </div>
+        <h1 style="font-size: clamp(38px, 6.4vw, 76px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; margin: 0">{{ slide.title }}</h1>
+        <p style="font-size: clamp(16px, 1.8vw, 19px); line-height: 1.55; color: var(--dim); max-width: 52ch; margin: 0">{{ slide.body }}</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px">
+          <a href="Plans.dc.html" style="padding: 16px 26px; border-radius: 14px; background: var(--blue); color: #fff; font-size: 15px; font-weight: 700; box-shadow: 0 12px 30px rgba(59,107,255,0.4); white-space: nowrap" style-hover="background: #2a57e6; color: #fff">Start free plan</a>
+          <a href="#library" style="padding: 16px 26px; border-radius: 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); color: var(--ink); font-size: 15px; font-weight: 600; white-space: nowrap" style-hover="background: rgba(255,255,255,0.14); color: var(--ink)">Browse exercises</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 8px">
+          <sc-for list="{{ slideDots }}" as="d" hint-placeholder-count="3">
+            <button type="button" onClick="{{ d.go }}" aria-label="{{ d.aria }}" style="cursor: pointer; border: 0; padding: 0; height: 4px; border-radius: 999px; width: {{ d.w }}; background: {{ d.bg }}; transition: all 0.3s ease"></button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 16px 20px 0">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px">
+      <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px">
+          <div style="font-size: 27px; font-weight: 800; letter-spacing: -0.02em; color: {{ s.tone }}">{{ s.value }}</div>
+          <div style="font-size: 13px; color: var(--faint); margin-top: 4px">{{ s.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div id="library" class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 64px 20px 0">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px">
+      <div style="flex: 1 1 340px; min-width: 0">
+        <div style="font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px">Exercise library</div>
+        <h2 style="font-size: clamp(26px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0">Train by body part</h2>
+      </div>
+      <a href="Category.dc.html?cat=chest" style="padding: 12px 18px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg1); font-size: 14px; font-weight: 600; white-space: nowrap" style-hover="border-color: var(--blue); color: var(--ink)">See all →</a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 14px">
+      <sc-for list="{{ categories }}" as="c" hint-placeholder-count="6">
+        <a href="{{ c.href }}" style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; transition: border-color 0.2s ease, transform 0.2s ease" style-hover="border-color: var(--blue); transform: translateY(-3px); color: var(--ink)">
+          <span style="position: relative; display: block; height: 168px; background: {{ c.artBg }}; overflow: hidden">
+            <sc-if value="{{ c.hasImg }}" hint-placeholder-val="{{ false }}">{{ c.imgEl }}</sc-if>
+            <sc-if value="{{ c.noImg }}" hint-placeholder-val="{{ true }}"><muscle-map group="{{ c.target }}" style="position:absolute;inset:12px 0"></muscle-map></sc-if>
+          </span>
+          <span style="padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px">
+            <span style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+              <span style="font-size: 19px; font-weight: 800; letter-spacing: -0.02em">{{ c.name }}</span>
+              <span style="font-size: 12px; font-weight: 700; color: var(--gold)">{{ c.count }}</span>
+            </span>
+            <span style="font-size: 13.5px; line-height: 1.5; color: var(--faint)">{{ c.blurb }}</span>
+            <span style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px">
+              <span style="padding: 5px 10px; border-radius: 999px; background: var(--blue-soft); color: #93aaff; font-size: 11.5px; font-weight: 700; white-space: nowrap">{{ c.toolsLabel }}</span>
+              <span style="padding: 5px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--dim); font-size: 11.5px; font-weight: 700; white-space: nowrap">{{ c.bodyLabel }}</span>
+            </span>
+          </span>
+        </a>
+      </sc-for>
+    </div>
+  </div>
+
+  <div id="today" class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 64px 20px 0">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px">
+      <div style="flex: 1 1 340px; min-width: 0">
+        <div style="font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px">Sample session</div>
+        <h2 style="font-size: clamp(26px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0">{{ dayTitle }}</h2>
+      </div>
+      <div class="rail" style="display: flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--bg1); border: 1px solid var(--line)">
+        <sc-for list="{{ dayTabs }}" as="t" hint-placeholder-count="3">
+          <button type="button" onClick="{{ t.pick }}" style="cursor: pointer; border: 0; padding: 10px 18px; border-radius: 999px; font-family: var(--font-body); font-size: 13.5px; font-weight: 700; background: {{ t.bg }}; color: {{ t.fg }}; white-space: nowrap; transition: all 0.2s ease">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 14px">
+      <sc-for list="{{ dayCards }}" as="e" hint-placeholder-count="6">
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column">
+          <div style="position: relative; height: 178px; background: {{ e.artBg }}; overflow: hidden">
+            <sc-if value="{{ e.hasImg }}" hint-placeholder-val="{{ false }}">{{ e.imgEl }}</sc-if>
+            <sc-if value="{{ e.noImg }}" hint-placeholder-val="{{ true }}"><muscle-map group="{{ e.target }}" view="{{ e.view }}" style="position:absolute;inset:12px 0"></muscle-map></sc-if>
+            <span style="position: absolute; top: 12px; left: 12px; width: 28px; height: 28px; border-radius: 999px; background: rgba(10,12,18,0.78); backdrop-filter: blur(6px); display: grid; place-items: center; font-size: 13px; font-weight: 800">{{ e.num }}</span>
+            <span style="position: absolute; top: 12px; right: 12px; padding: 5px 10px; border-radius: 999px; background: {{ e.levelBg }}; color: {{ e.levelFg }}; font-size: 11px; font-weight: 800; letter-spacing: 0.04em">{{ e.level }}</span>
+          </div>
+          <div style="padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; flex: 1">
+            <div style="font-size: 16.5px; font-weight: 800; line-height: 1.25; letter-spacing: -0.015em">{{ e.name }}</div>
+            <div style="font-size: 13px; color: var(--faint)">{{ e.equipment }}</div>
+            <div style="margin-top: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; padding-top: 12px; border-top: 1px solid var(--line)">
+              <span style="font-size: 15px; font-weight: 800; white-space: nowrap">{{ e.dose }}</span>
+              <span style="width: 3px; height: 3px; border-radius: 999px; background: var(--faint)"></span>
+              <span style="font-size: 13px; color: var(--dim); white-space: nowrap">{{ e.rest }} rest</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top: 16px; display: flex; flex-wrap: wrap; gap: 12px">
+      <a href="Training Program.dc.html" style="padding: 15px 24px; border-radius: 14px; background: var(--blue); color: #fff; font-size: 14.5px; font-weight: 700; box-shadow: 0 10px 26px rgba(59,107,255,0.35); white-space: nowrap" style-hover="background: #2a57e6; color: #fff">Run this session →</a>
+      <a href="Plans.dc.html" style="padding: 15px 24px; border-radius: 14px; background: var(--bg1); border: 1px solid var(--line); font-size: 14.5px; font-weight: 600; white-space: nowrap" style-hover="border-color: var(--blue); color: var(--ink)">See the full week</a>
+    </div>
+  </div>
+
+  <div id="progress" class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 64px 20px 0">
+    <div style="font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px">Progress</div>
+    <h2 style="font-size: clamp(26px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0 0 22px">Numbers, not feelings</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 14px">
+      <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+        <div style="font-size: 14px; font-weight: 700; color: var(--dim)">Your measurements</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); gap: 12px">
+          <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--faint)">Height (cm)
+            <input value="{{ height }}" onChange="{{ setHeight }}" inputMode="decimal" placeholder="175" style="width: 100%; box-sizing: border-box; min-height: 54px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg2); color: var(--ink); font-family: var(--font-body); font-size: 19px; font-weight: 700">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--faint)">Weight (kg)
+            <input value="{{ weight }}" onChange="{{ setWeight }}" inputMode="decimal" placeholder="72" style="width: 100%; box-sizing: border-box; min-height: 54px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg2); color: var(--ink); font-family: var(--font-body); font-size: 19px; font-weight: 700">
+          </label>
+        </div>
+        <button type="button" onClick="{{ saveBody }}" style="cursor: pointer; border: 0; min-height: 54px; border-radius: 14px; background: var(--blue); color: #fff; font-family: var(--font-body); font-size: 14.5px; font-weight: 700">Save today's entry</button>
+        <div style="font-size: 12.5px; color: var(--faint)">{{ savedNote }}</div>
+      </div>
+      <div style="border-radius: 22px; padding: 24px; display: flex; flex-direction: column; gap: 12px; background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); box-shadow: 0 18px 40px rgba(59,107,255,0.28)">
+        <div style="font-size: 14px; font-weight: 700; opacity: 0.85">What we read from it</div>
+        <div style="display: flex; align-items: baseline; gap: 10px">
+          <span style="font-size: clamp(48px, 8vw, 76px); font-weight: 800; letter-spacing: -0.04em; line-height: 1">{{ bmiValue }}</span>
+          <span style="font-size: 15px; font-weight: 700; opacity: 0.85">{{ bmiUnit }}</span>
+        </div>
+        <div style="align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.18); font-size: 13px; font-weight: 700; white-space: nowrap">{{ bmiBand }}</div>
+        <p style="font-size: 15px; line-height: 1.55; margin: 6px 0 0">{{ advice }}</p>
+        <a href="Training Program.dc.html" style="margin-top: auto; align-self: flex-start; padding: 13px 20px; border-radius: 12px; background: #0a0c12; color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap" style-hover="background: #000; color: #fff">Open the training app →</a>
+      </div>
+    </div>
+    <p style="font-size: 12.5px; color: var(--faint); margin-top: 12px; max-width: 76ch">BMI is a rough population measure, not a diagnosis, and it reads high for muscular builds. We use it only to pick a starting emphasis. Everything you enter stays on this device.</p>
+  </div>
+
+  <div class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 64px 20px 0">
+    <div style="position: relative; border-radius: 28px; overflow: hidden; border: 1px solid var(--line); background: var(--bg1); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr))">
+      <div style="padding: clamp(26px, 4vw, 48px); display: flex; flex-direction: column; gap: 16px; justify-content: center">
+        <div style="align-self: flex-start; padding: 7px 14px; border-radius: 999px; background: var(--blue-soft); color: #93aaff; font-size: 12.5px; font-weight: 700">Build your own</div>
+        <h2 style="font-size: clamp(28px, 4vw, 46px); line-height: 1.05; letter-spacing: -0.035em; font-weight: 800; margin: 0">Your plan, placed on real days</h2>
+        <p style="font-size: 16px; line-height: 1.55; color: var(--dim); max-width: 44ch; margin: 0">Pick a recommended week — exercises and rest already scheduled, ordered by difficulty — then swap any movement for one that matches your equipment.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px">
+          <a href="Plans.dc.html" style="padding: 15px 24px; border-radius: 14px; background: var(--blue); color: #fff; font-size: 14.5px; font-weight: 700; white-space: nowrap" style-hover="background: #2a57e6; color: #fff">Build my plan</a>
+          <a href="Training Program.dc.html" style="padding: 15px 24px; border-radius: 14px; background: rgba(255,255,255,0.06); border: 1px solid var(--line); font-size: 14.5px; font-weight: 600; white-space: nowrap" style-hover="border-color: var(--blue); color: var(--ink)">See the 5-day program</a>
+        </div>
+      </div>
+      <div style="position: relative; min-height: 300px; background: var(--bg2)">
+        <image-slot id="plan-photo" shape="rect" fit="cover" placeholder=""></image-slot>
+      </div>
+    </div>
+  </div>
+
+  <div id="faq" class="gutter" style="max-width: 1240px; margin: 0 auto; padding: 64px 20px 0">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr)); gap: 32px; align-items: start">
+      <div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--blue); margin-bottom: 8px">FAQ &amp; support</div>
+        <h2 style="font-size: clamp(26px, 3.6vw, 40px); line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 0 0 14px">Free, and staying free</h2>
+        <p style="font-size: 15.5px; line-height: 1.6; color: var(--dim); max-width: 42ch; margin: 0 0 20px">No account, no paywall, no ads. Donations cover hosting and keeping the exercise library accurate.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
+            <button type="button" onClick="{{ t.pick }}" style="cursor: pointer; padding: 13px 20px; border-radius: 999px; font-family: var(--font-body); font-size: 14px; font-weight: 700; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}; border: 1px solid {{ t.border }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size: 12.5px; color: var(--faint); margin-top: 12px; max-width: 42ch">{{ donateNote }}</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <sc-for list="{{ faq }}" as="f" hint-placeholder-count="5">
+          <div style="background: var(--bg1); border: 1px solid {{ f.border }}; border-radius: 16px; overflow: hidden">
+            <button type="button" onClick="{{ f.toggle }}" style="cursor: pointer; width: 100%; text-align: left; background: transparent; border: 0; padding: 18px 20px; display: flex; align-items: center; gap: 14px; color: var(--ink); font-family: var(--font-body)">
+              <span style="flex: 1; font-size: 15.5px; font-weight: 700; line-height: 1.35">{{ f.q }}</span>
+              <span style="width: 26px; height: 26px; border-radius: 999px; background: var(--bg2); display: grid; place-items: center; font-size: 15px; font-weight: 700; color: var(--blue)">{{ f.sign }}</span>
+            </button>
+            <sc-if value="{{ f.open }}" hint-placeholder-val="{{ false }}">
+              <p style="margin: 0; padding: 0 20px 20px; font-size: 14.5px; line-height: 1.6; color: var(--dim)">{{ f.a }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 1240px; margin: 56px auto 0; padding: 28px 20px 44px; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 26px">
+    <div>
+      <div style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; margin-bottom: 10px">
+        <span style="width: 26px; height: 26px; border-radius: 8px; background: var(--blue); display: grid; place-items: center; font-size: 12px; font-weight: 900; color: #fff">G</span>
+        Groundwork
+      </div>
+      <div style="font-size: 13.5px; line-height: 1.6; color: var(--faint); max-width: 32ch">Beginner strength training, scheduling and progress tracking. Built for people starting from zero.</div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 9px">
+      <a href="#library" style="font-size: 14px; color: var(--dim)">Exercise library</a>
+      <a href="Plans.dc.html" style="font-size: 14px; color: var(--dim)">Weekly plans</a>
+      <a href="Training Program.dc.html" style="font-size: 14px; color: var(--dim)">Training app</a>
+      <a href="#faq" style="font-size: 14px; color: var(--dim)">Support us</a>
+    </div>
+    <div>
+      <div style="font-size: 12px; font-weight: 700; color: var(--gold); margin-bottom: 8px">Disclaimer</div>
+      <p style="font-size: 12.5px; line-height: 1.65; margin: 0; color: var(--faint)">This training program is designed for general fitness education. Start with manageable weights, prioritize controlled technique, and stop if you experience sharp or unusual pain. Consult a qualified professional if you have an injury, medical condition, or are unsure whether an exercise is appropriate for you.</p>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240},&quot;autoAdvance&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Hero&quot;}}">
+const SLIDES = [
+  { kicker: 'Start from zero', title: 'No expertise required', body: 'No coach, no bought program, no gym history. Five movements you can do correctly and a week that repeats — that is the whole entry fee.' },
+  { kicker: 'No advanced tools', title: 'A floor is enough to start', body: 'Every body part has a machine version and a version that needs nothing: floor, wall, chair, stairs. Train at home first, then walk into a gym already knowing the pattern.' },
+  { kicker: 'Stay consistent', title: 'Discipline is a schedule', body: 'Two, three or five sessions a week on real days with rest built in. Follow the week, log the sets, and progress becomes something you read rather than feel.' }
+];
+
+const SESSIONS = [
+  { id: 'push', label: 'Push day', title: 'Chest, shoulders & triceps', ids: ['machine-chest-press', 'incline-db-press', 'lateral-raise', 'pec-deck', 'triceps-pushdown', 'overhead-triceps'] },
+  { id: 'pull', label: 'Pull day', title: 'Back & biceps', ids: ['lat-pulldown', 'chest-supported-row', 'seated-cable-row', 'reverse-pec-deck', 'db-curl', 'hammer-curl'] },
+  { id: 'legs', label: 'Leg day', title: 'Legs & core', ids: ['leg-press', 'leg-extension', 'leg-curl', 'hip-abductor', 'calf-raise', 'plank'] }
+];
+
+const TIERS = [
+  { amount: '€3', label: 'Donate €3' },
+  { amount: '€10', label: 'Donate €10' },
+  { amount: '€25', label: 'Donate €25' }
+];
+
+const FAQ = [
+  { q: 'Is this suitable for complete beginners?', a: 'Yes — it is built for them. Every exercise is graded low or medium, machines and stable movements come first, and nothing technically demanding (barbell squats, deadlifts, olympic lifts) appears in the program.' },
+  { q: 'Do I need a gym?', a: 'No. Each body part lists exercises that need nothing but a floor, a wall, a chair or a set of stairs. Start at home and move to a gym when you want to add load.' },
+  { q: 'How long does a session take?', a: 'Between 45 and 70 minutes depending on the day and how long you rest. The shorter two-day plan runs 35 to 45 minutes.' },
+  { q: 'What does it cost?', a: 'Nothing. There is no account, no paywall and no advertising. Donations cover hosting and keeping the library accurate.' },
+  { q: 'How is progress tracked?', a: 'The training app logs the weight and reps of every set, plus body weight, chest and arm measurements, and charts them over time. Everything stays on your own device.' }
+];
+
+const LEVEL_STYLE = {
+  LOW: { bg: 'rgba(72,200,140,0.18)', fg: '#5fd9a4' },
+  MEDIUM: { bg: 'rgba(255,209,74,0.18)', fg: '#ffd14a' },
+  ADVANCED: { bg: 'rgba(255,92,92,0.18)', fg: '#ff7a7a' }
+};
+
+const BACKVIEW = new Set(['back','triceps','hams','glutes','calves']);
+const KEY = 'groundwork.body.v1';
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+    this.state = {
+      slide: 0, height: saved.height || '', weight: saved.weight || '',
+      savedAt: saved.date || '', tier: null, session: 'push', faq: 0
+    };
+  }
+
+  componentDidMount() {
+    if (this.props.autoAdvance !== false) {
+      this.timer = setInterval(() => this.setState(s => ({ slide: (s.slide + 1) % SLIDES.length })), 7000);
+    }
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  bmi() {
+    const h = parseFloat(this.state.height), w = parseFloat(this.state.weight);
+    if (!h || !w || h < 80 || h > 250) return null;
+    return w / Math.pow(h / 100, 2);
+  }
+
+  renderVals() {
+    const s = this.state;
+    const data = window.FIT || { categories: [], exercises: [], plans: [] };
+    const byId = (id) => data.exercises.find(e => e.id === id);
+    const b = this.bmi();
+    const band = b == null ? 'Awaiting your numbers' : (b < 18.5 ? 'Below the usual range' : b < 25 ? 'Within the usual range' : b < 30 ? 'Above the usual range' : 'Well above the usual range');
+    const advice = b == null
+      ? 'Enter your height and weight and we suggest a starting emphasis — how many sessions a week, which body parts first, and whether to lead with machines or bodyweight work.'
+      : b < 18.5 ? 'Lead with three full-body sessions a week and eat enough to support them. Machine pressing and rowing first, longer rests, no rush to add load.'
+      : b < 25 ? 'Three sessions a week on a push / pull / legs split fits you well. Prioritise chest, back and arms, and add a fourth day once eight weeks are behind you.'
+      : b < 30 ? 'Two or three sessions plus daily walking is the honest starting point. Machines and bodyweight work spare the joints while the habit forms.'
+      : 'Start with two short machine-based sessions a week and walking on the other days. Add a third only when the first two feel routine, and speak to a professional first.';
+
+    const session = SESSIONS.find(x => x.id === s.session) || SESSIONS[0];
+
+    return {
+      navLinks: [
+        { label: 'Exercises', href: '#library' },
+        { label: 'Sessions', href: '#today' },
+        { label: 'Progress', href: '#progress' },
+        { label: 'FAQ', href: '#faq' },
+        { label: 'Sign in', href: 'Account Screens.dc.html' }
+      ],
+
+      slide: SLIDES[s.slide],
+      slideDots: SLIDES.map((sl, i) => ({
+        bg: i === s.slide ? '#3b6bff' : 'rgba(255,255,255,0.22)',
+        w: i === s.slide ? '38px' : '14px',
+        aria: 'Go to slide ' + (i + 1),
+        go: () => this.setState({ slide: i })
+      })),
+
+      stats: [
+        { value: String(data.exercises.length), label: 'Exercises documented', tone: 'var(--ink)' },
+        { value: String(data.exercises.filter(e => e.kit === 'bodyweight').length), label: 'Need no equipment', tone: 'var(--gold)' },
+        { value: '3', label: 'Weekly plans to pick from', tone: 'var(--ink)' },
+        { value: '€0', label: 'Cost, no account', tone: 'var(--ink)' }
+      ],
+
+      categories: data.categories.map(c => {
+        const list = data.exercises.filter(e => e.cat === c.id);
+        return {
+          name: c.name, blurb: c.blurb, target: c.id,
+          hasImg: !!c.img, noImg: !c.img,
+          imgEl: c.img ? React.createElement('img', { src: c.img, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 38%' } }) : null,
+          artBg: c.img ? '#eef0f4' : 'radial-gradient(70% 70% at 50% 42%, rgba(59,107,255,0.14) 0%, rgba(22,26,38,0) 70%), var(--bg2)',
+          href: 'Category.dc.html?cat=' + c.id,
+          count: list.length + ' exercises',
+          toolsLabel: list.filter(e => e.kit === 'tools').length + ' with kit',
+          bodyLabel: list.filter(e => e.kit === 'bodyweight').length + ' no kit'
+        };
+      }),
+
+      dayTitle: session.title,
+      dayTabs: SESSIONS.map(x => ({
+        label: x.label,
+        bg: x.id === s.session ? '#3b6bff' : 'transparent',
+        fg: x.id === s.session ? '#fff' : 'var(--dim)',
+        pick: () => this.setState({ session: x.id })
+      })),
+      dayCards: session.ids.map((id, i) => {
+        const e = byId(id);
+        if (!e) return { num: String(i + 1), name: '', equipment: '', dose: '', rest: '', level: '', levelBg: '', levelFg: '', target: 'fullbody', view: 'front', hasImg: false, noImg: true, imgEl: null, artBg: 'var(--bg2)' };
+        const ls = LEVEL_STYLE[e.level] || LEVEL_STYLE.LOW;
+        return {
+          num: String(i + 1), name: e.name, equipment: e.equipment,
+          dose: e.sets + ' × ' + e.reps, rest: e.rest,
+          level: e.level, levelBg: ls.bg, levelFg: ls.fg,
+          target: window.FIT_TARGET(e), view: BACKVIEW.has(window.FIT_TARGET(e)) ? 'back' : 'front',
+          hasImg: !!e.img, noImg: !e.img,
+          imgEl: e.img ? React.createElement('img', { src: e.img, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 8, boxSizing: 'border-box' } }) : null,
+          artBg: e.img ? '#eef0f4' : 'radial-gradient(70% 70% at 50% 45%, rgba(59,107,255,0.14) 0%, rgba(22,26,38,0) 70%), var(--bg2)'
+        };
+      }),
+
+      height: s.height, weight: s.weight,
+      setHeight: (e) => this.setState({ height: e.target.value }),
+      setWeight: (e) => this.setState({ weight: e.target.value }),
+      saveBody: () => {
+        const date = new Date().toISOString().slice(0, 10);
+        try { localStorage.setItem(KEY, JSON.stringify({ height: s.height, weight: s.weight, date })); } catch (e) {}
+        this.setState({ savedAt: date });
+      },
+      savedNote: s.savedAt ? 'Saved on ' + s.savedAt + '. This device only — no account, no server.' : 'Stored on this device only. No account, no server.',
+      bmiValue: b == null ? '—' : b.toFixed(1),
+      bmiUnit: b == null ? 'BMI' : 'BMI',
+      bmiBand: band,
+      advice,
+
+      tiers: TIERS.map((t, i) => ({
+        label: s.tier === i ? 'Thank you ✓' : t.label,
+        bg: s.tier === i ? '#3b6bff' : 'transparent',
+        fg: s.tier === i ? '#fff' : 'var(--ink)',
+        border: s.tier === i ? '#3b6bff' : 'var(--line)',
+        pick: () => this.setState({ tier: i })
+      })),
+      donateNote: s.tier == null
+        ? 'Payment processing is not connected in this build — pick a tier to mark your intent.'
+        : 'Noted. Connect a payment provider and this takes the ' + TIERS[s.tier].amount + ' donation.',
+
+      faq: FAQ.map((f, i) => ({
+        q: f.q, a: f.a, open: s.faq === i, sign: s.faq === i ? '−' : '+',
+        border: s.faq === i ? 'var(--blue)' : 'var(--line)',
+        toggle: () => this.setState({ faq: s.faq === i ? -1 : i })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/styles.css">
+<script src="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f4f6fb; --dim: #9aa3b8; --faint: #6b7488;
+  --bg0: #0a0c12; --bg1: #10131c; --bg2: #161a26; --line: #232838;
+  --blue: #3b6bff; --blue-soft: rgba(59,107,255,0.16); --gold: #ffd14a;
+}
+body { margin: 0; background: var(--bg0); }
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--blue); }
+::selection { background: var(--blue); color: #fff; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+input, button { font-family: Archivo, system-ui, sans-serif; }
+
+/* dark-system overrides for the design-system components used on this page */
+.btn { border-radius: 12px !important; font-family: Archivo, system-ui, sans-serif !important; font-weight: 700 !important; letter-spacing: 0 !important; text-transform: none !important; white-space: nowrap !important; transition: background .18s ease, border-color .18s ease; }
+.pill { border-radius: 999px !important; border: 1px solid var(--line) !important; }
+.pill.is-on { border-color: transparent !important; }
+.btn-primary { background: var(--blue) !important; color: #fff !important; border: 0 !important; box-shadow: 0 10px 26px rgba(59,107,255,.32); }
+.btn-primary:hover { background: #2a57e6 !important; }
+.btn-secondary { background: var(--bg1) !important; color: var(--ink) !important; border: 1px solid var(--line) !important; }
+.btn-secondary:hover { border-color: var(--blue) !important; }
+.btn-ghost { background: transparent !important; color: var(--dim) !important; border: 0 !important; }
+.btn-ghost:hover { color: var(--ink) !important; }
+.input { border-radius: 14px !important; background: var(--bg2) !important; color: var(--ink) !important; border: 1px solid var(--line) !important; font-family: Archivo, system-ui, sans-serif !important; font-weight: 700 !important; padding: 0 16px !important; }
+.input::placeholder { color: var(--faint) !important; }
+.input:focus { border-color: var(--blue) !important; outline: none !important; }
+.field { display: flex !important; flex-direction: column !important; gap: 8px !important; }
+.field label { color: var(--faint) !important; font-weight: 600 !important; letter-spacing: 0 !important; text-transform: none !important; font-size: 12.5px !important; }
+.tag { display: inline-block; border-radius: 999px !important; padding: 5px 11px !important; font-size: 11.5px !important; font-weight: 800 !important; letter-spacing: 0 !important; text-transform: none !important; border: 0 !important; }
+.lv-low { background: rgba(72,200,140,.18) !important; color: #5fd9a4 !important; }
+.lv-med { background: rgba(255,209,74,.18) !important; color: #ffd14a !important; }
+.lv-adv { background: rgba(255,92,92,.18) !important; color: #ff7a7a !important; }
+.card { background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; border-radius: 20px; }
+@media (max-width: 640px) {
+  .rail { overflow-x: auto; flex-wrap: nowrap !important; scrollbar-width: none; }
+  .rail::-webkit-scrollbar { display: none; }
+}
+</style>
+</helmet>
+
+<div style="font-family: var(--font-body); color: var(--ink); background: var(--bg0); min-height: 100vh; padding-bottom: 40px">
+
+  <div style="max-width: 1180px; margin: 0 auto; padding: 0 16px">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding: 18px 0 12px">
+      <a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px; color: var(--ink)"><span style="width: 30px; height: 30px; border-radius: 9px; background: var(--blue); display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff">G</span>Groundwork</a>
+      <div style="font-size: 13px; color: var(--dim)">Training app</div>
+      <div style="font-size: 13px; color: var(--faint); white-space: nowrap">Chest · Biceps · Triceps · Shoulders</div>
+      <div style="flex: 1"></div>
+      <div style="font-size: 13px; color: var(--faint); white-space: nowrap">{{ unitLabel }}</div>
+    </div>
+
+    <div class="rail" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0; position: sticky; top: 0; z-index: 20; background: rgba(10,12,18,.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line)">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+        <button type="button" onClick="{{ n.go }}" class="{{ n.cls }}" style="min-height: 44px; padding: 0 18px; font-size: 14px; color: {{ n.fg }}; font-weight: {{ n.weight }}; background: {{ n.bg }}" style-hover="color: var(--ink)">{{ n.label }}</button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+      <div style="padding: 28px 0 0">
+        <div style="font-size: 11px; letter-spacing: 0.01em; color: var(--blue); margin-bottom: 6px">Today — {{ todayDate }}</div>
+        <h1 style="font-size: clamp(38px, 8vw, 68px); margin: 0 0 4px">{{ todayName }}</h1>
+        <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(20px, 4vw, 30px); color: var(--blue); margin-bottom: 20px">{{ todayFocus }}</div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px">
+          <sc-for list="{{ todayStats }}" as="s" hint-placeholder-count="4">
+            <div style="padding: 16px 18px; background: var(--bg1); border: 1px solid var(--line); border-radius: 18px">
+              <div style="font-size: 12.5px; color: var(--faint); margin-bottom: 8px">{{ s.label }}</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 26px; line-height: 1.05">{{ s.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ hasTodayWorkout }}" hint-placeholder-val="{{ true }}">
+          <div style="padding: 22px 0 0">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px; font-size: 11px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 8px">
+              <span>Progress through today</span>
+              <span>{{ progLabel }}</span>
+            </div>
+            <div style="height: 14px; background: var(--bg2); border: 1px solid var(--line); border-radius: 999px; overflow: hidden">
+              <div style="height: 100%; background: var(--blue); width: {{ progPct }}"></div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px">
+              <button type="button" onClick="{{ startToday }}" class="btn btn-primary" style="min-height: 52px; padding: 0 22px; font-size: 15px; letter-spacing: 0.01em">{{ startTodayLabel }}</button>
+              <button type="button" onClick="{{ openToday }}" class="btn btn-secondary" style="min-height: 52px; padding: 0 22px; font-size: 15px; letter-spacing: 0.01em">View exercises</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isRestToday }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 22px; background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); color: #fff; border-radius: 22px; box-shadow: 0 18px 40px rgba(59,107,255,0.28); padding: 28px 24px">
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(28px, 6vw, 46px); line-height: 1">Rest &amp; recovery</div>
+            <div style="font-size: 11px; letter-spacing: 0.01em; margin: 14px 0 10px">Optional</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: 10px; font-size: 15px; font-weight: 600">
+              <div>Walking</div>
+              <div>Light stretching</div>
+              <div>Hydration</div>
+              <div>Sleep</div>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="margin-top: 34px; border-top: 1px solid var(--line); padding-top: 18px">
+          <h2 style="font-size: 13px; letter-spacing: 0.01em; margin-bottom: 14px">Weekly schedule</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 12px">
+            <sc-for list="{{ week }}" as="d" hint-placeholder-count="7">
+              <button type="button" onClick="{{ d.open }}" style="text-align: left; cursor: pointer; background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; border-left-width: 8px; border-left-color: {{ d.edge }}; padding: 16px; font-family: var(--font-body); color: var(--ink); display: flex; flex-direction: column; gap: 6px" style-hover="background: var(--bg2)">
+                <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 17px">{{ d.name }}</span>
+                <span style="font-size: 14px; font-weight: 600; color: var(--blue)">{{ d.focus }}</span>
+                <span style="font-size: 12px; letter-spacing: 0.01em; color: var(--faint)">{{ d.meta }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDay }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 24px 0 0">
+        <button type="button" onClick="{{ backHome }}" class="btn btn-ghost" style="padding-left: 0; font-size: 12px; letter-spacing: 0.01em; margin-bottom: 14px">← Schedule</button>
+        <h1 style="font-size: clamp(34px, 7vw, 60px); margin: 0 0 2px">{{ dayName }}</h1>
+        <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(18px, 3.6vw, 28px); color: var(--blue)">{{ dayFocus }}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 26px; margin: 16px 0 20px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 13px; letter-spacing: 0.01em">
+          <span style="white-space: nowrap">{{ dayCount }}</span>
+          <span style="white-space: nowrap">{{ dayDuration }}</span>
+          <span style="color: var(--faint); white-space: nowrap">{{ dayMuscles }}</span>
+        </div>
+
+        <sc-if value="{{ dayIsRest }}" hint-placeholder-val="{{ false }}">
+          <div style="background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); color: #fff; border-radius: 22px; box-shadow: 0 18px 40px rgba(59,107,255,0.28); padding: 30px 24px">
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(28px, 6vw, 46px); line-height: 1">Rest &amp; recovery</div>
+            <p style="margin: 14px 0 0; font-size: 16px; max-width: 46ch">{{ restCopy }}</p>
+          </div>
+        </sc-if>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 14px">
+          <sc-for list="{{ dayItems }}" as="it" hint-placeholder-count="7">
+            <button type="button" onClick="{{ it.open }}" style="cursor: pointer; text-align: left; background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 0; font-family: var(--font-body); color: var(--ink); display: flex; flex-direction: column" style-hover="border-color: var(--blue)">
+              <sc-if value="{{ it.hasImg }}" hint-placeholder-val="{{ false }}"><span style="display: block; position: relative; height: 200px; background: #fff; border-radius: 17px 17px 0 0; overflow: hidden">{{ it.imgEl }}</span></sc-if>
+              <span style="display: flex; align-items: stretch; gap: 0; border-bottom: 1px solid var(--line)">
+                <span style="flex: 0 0 84px; background: var(--bg2); color: var(--ink); font-weight: 800; letter-spacing: -0.02em; font-size: 44px; line-height: 1; display: flex; align-items: center; justify-content: center; padding: 18px 0">{{ it.n }}</span>
+                <span style="flex: 1; padding: 14px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0">
+                  <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 20px; line-height: 1.1">{{ it.name }}</span>
+                  <span style="font-size: 12px; letter-spacing: 0.01em; color: var(--faint)">{{ it.muscle }}</span>
+                </span>
+              </span>
+              <span style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(96px, 100%), 1fr)); gap: 0">
+                <span style="padding: 12px 14px; border-right: 1px solid var(--line)">
+                  <span style="display: block; font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Sets × reps</span>
+                  <span style="display: block; font-weight: 800; letter-spacing: -0.02em; font-size: 22px">{{ it.setsReps }}</span>
+                </span>
+                <span style="padding: 12px 14px; border-right: 1px solid var(--line)">
+                  <span style="display: block; font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Rest</span>
+                  <span style="display: block; font-weight: 800; letter-spacing: -0.02em; font-size: 22px">{{ it.rest }}</span>
+                </span>
+                <span style="padding: 12px 14px">
+                  <span style="display: block; font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Level</span>
+                  <span class="{{ it.levelTag }}" style="margin-top: 2px">{{ it.level }}</span>
+                </span>
+              </span>
+              <span style="padding: 10px 14px; border-top: 1px solid var(--line); font-size: 13px; color: var(--dim)">{{ it.equipment }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ dayHasWork }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 20px">
+            <button type="button" onClick="{{ startDay }}" class="btn btn-primary" style="width: 100%; min-height: 62px; justify-content: flex-start; padding: 0 22px; font-size: 18px; letter-spacing: 0.01em">Start workout</button>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isEx }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 24px 0 0">
+        <button type="button" onClick="{{ back }}" class="btn btn-ghost" style="padding-left: 0; font-size: 12px; letter-spacing: 0.01em; margin-bottom: 14px">← Back</button>
+
+        <sc-if value="{{ ex.hasImg }}" hint-placeholder-val="{{ false }}"><div style="position: relative; height: clamp(240px, 52vw, 460px); background: #fff; border-radius: 18px; overflow: hidden; margin-bottom: 12px">{{ ex.imgEl }}</div></sc-if>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 18px; border-radius: 18px">
+          <div style="background: var(--bg2); color: var(--ink); padding: 26px 22px; display: flex; flex-direction: column; justify-content: space-between; gap: 22px; min-height: 220px">
+            <div style="font-size: 11px; letter-spacing: 0.01em">{{ ex.category }}</div>
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(56px, 14vw, 120px); line-height: 0.85; color: var(--gold)">{{ ex.badgeNum }}</div>
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(22px, 5vw, 36px); line-height: 1">{{ ex.muscleGroup }}</div>
+          </div>
+          <div style="padding: 22px; display: flex; flex-direction: column; gap: 12px">
+            <h1 style="font-size: clamp(26px, 5vw, 42px); margin: 0">{{ ex.name }}</h1>
+            <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px">
+              <span class="{{ ex.levelTag }}" style="white-space: nowrap">{{ ex.levelLabel }}</span>
+              <span style="font-size: 13px; color: var(--faint)">{{ ex.levelNote }}</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(90px, 100%), 1fr)); gap: 12px; border-top: 1px solid var(--line); padding-top: 12px">
+              <div>
+                <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Sets</div>
+                <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 30px">{{ ex.sets }}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Reps</div>
+                <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 30px">{{ ex.reps }}</div>
+              </div>
+              <div>
+                <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Rest</div>
+                <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 30px">{{ ex.rest }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 0; border-left: 2px solid var(--color-divider); border-right: 2px solid var(--color-divider); border-bottom: 1px solid var(--line)">
+          <div style="padding: 16px; border-right: 1px solid var(--line)">
+            <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 8px">Equipment</div>
+            <sc-for list="{{ ex.equipment }}" as="e" hint-placeholder-count="2">
+              <div style="font-size: 15px; font-weight: 600">{{ e }}</div>
+            </sc-for>
+          </div>
+          <div style="padding: 16px; border-right: 1px solid var(--line)">
+            <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 8px">Main muscle</div>
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 18px">{{ ex.muscleGroup }}</div>
+          </div>
+          <div style="padding: 16px">
+            <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 8px">Secondary muscles</div>
+            <sc-for list="{{ ex.secondaryMuscles }}" as="s" hint-placeholder-count="2">
+              <div style="font-size: 15px; font-weight: 600">{{ s }}</div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 26px; margin-top: 26px">
+          <div>
+            <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px">How to perform</h2>
+            <sc-for list="{{ ex.instructions }}" as="step" hint-placeholder-count="5">
+              <div style="display: flex; gap: 12px; margin-bottom: 12px">
+                <div style="flex: 0 0 28px; font-weight: 800; letter-spacing: -0.02em; font-size: 18px; color: var(--blue)">{{ step.n }}</div>
+                <div style="font-size: 15px; line-height: 1.5">{{ step.text }}</div>
+              </div>
+            </sc-for>
+
+            <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 24px 0 12px">Setup</h2>
+            <p style="font-size: 15px; line-height: 1.55">{{ ex.setup }}</p>
+          </div>
+          <div>
+            <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 12px">Form cues</h2>
+            <sc-for list="{{ ex.formCues }}" as="c" hint-placeholder-count="3">
+              <div style="font-size: 15px; padding: 8px 0 8px 12px; border-left: 3px solid var(--blue); margin-bottom: 8px">{{ c }}</div>
+            </sc-for>
+
+            <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 24px 0 12px">Common mistakes</h2>
+            <sc-for list="{{ ex.commonMistakes }}" as="m" hint-placeholder-count="3">
+              <div style="font-size: 15px; padding: 8px 0 8px 12px; border-left: 3px solid var(--line); margin-bottom: 8px">{{ m }}</div>
+            </sc-for>
+
+            <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 24px 0 12px">Alternatives</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{ ex.alternatives }}" as="a" hint-placeholder-count="2">
+                <button type="button" onClick="{{ a.open }}" class="btn btn-secondary" style="font-size: 13px; min-height: 44px">{{ a.name }}</button>
+              </sc-for>
+            </div>
+
+            <div style="margin-top: 24px; border: 1px solid var(--line); border-radius: 18px; padding: 16px">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 6px">Video</div>
+              <div style="font-size: 14px; color: var(--dim)">{{ ex.videoNote }}</div>
+            </div>
+            <div style="margin-top: 12px; border: 1px solid var(--blue); border-radius: 18px; padding: 16px">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--blue); margin-bottom: 6px">Safety</div>
+              <div style="font-size: 14px">{{ ex.safetyNotes }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLib }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 24px 0 0">
+        <h1 style="font-size: clamp(30px, 6vw, 52px); margin: 0 0 16px">Exercise library</h1>
+        <input class="input" value="{{ search }}" onChange="{{ setSearch }}" placeholder="Search exercises" style="width: 100%; box-sizing: border-box; min-height: 52px; font-size: 16px; margin-bottom: 6px">
+        <sc-for list="{{ filterGroups }}" as="g" hint-placeholder-count="4">
+          <div style="border-top: 1px solid var(--line); padding: 12px 0">
+            <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 8px">{{ g.label }}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <sc-for list="{{ g.chips }}" as="c" hint-placeholder-count="4">
+                <button type="button" onClick="{{ c.toggle }}" class="{{ c.cls }}" style="min-height: 44px; font-size: 13px; letter-spacing: 0.06em">{{ c.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 12px 0; margin-bottom: 16px">
+          <div style="font-size: 13px; letter-spacing: 0.01em">{{ resultLabel }}</div>
+          <button type="button" onClick="{{ clearFilters }}" class="btn btn-ghost" style="font-size: 12px; letter-spacing: 0.01em">Clear all</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 14px">
+          <sc-for list="{{ results }}" as="r" hint-placeholder-count="6">
+            <button type="button" onClick="{{ r.open }}" style="cursor: pointer; text-align: left; background: var(--bg1); border: 1px solid var(--line); border-radius: 18px; padding: 16px; font-family: var(--font-body); color: var(--ink); display: flex; flex-direction: column; gap: 8px" style-hover="border-color: var(--blue)">
+              <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}"><span style="display: block; position: relative; height: 180px; margin: -16px -16px 4px; background: #fff; border-radius: 17px 17px 0 0; overflow: hidden">{{ r.imgEl }}</span></sc-if>
+              <span style="font-size: 11px; letter-spacing: 0.01em; color: var(--blue)">{{ r.muscle }}</span>
+              <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 20px; line-height: 1.1">{{ r.name }}</span>
+              <span><span class="{{ r.levelTag }}">{{ r.level }}</span></span>
+              <span style="font-size: 13px; color: var(--dim)">{{ r.equipment }}</span>
+              <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 16px">{{ r.setsReps }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+          <div style="border: 1px solid var(--line); border-radius: 18px; padding: 24px; font-size: 15px">No exercises match these filters. Try clearing one.</div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isProg }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 24px 0 0">
+        <h1 style="font-size: clamp(30px, 6vw, 52px); margin: 0 0 16px">Progress</h1>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px; margin-bottom: 26px">
+          <sc-for list="{{ progStats }}" as="s" hint-placeholder-count="4">
+            <div style="padding: 16px 18px; background: var(--bg1); border: 1px solid var(--line); border-radius: 18px">
+              <div style="font-size: 12.5px; color: var(--faint); margin-bottom: 8px">{{ s.label }}</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 26px; line-height: 1.05">{{ s.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 14px">Log a measurement</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 12px; align-items: end; margin-bottom: 30px">
+          <sc-for list="{{ measureFields }}" as="f" hint-placeholder-count="3">
+            <div class="field">
+              <label style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">{{ f.label }}</label>
+              <input class="input" value="{{ f.value }}" onChange="{{ f.onChange }}" inputMode="decimal" placeholder="0" style="width: 100%; box-sizing: border-box; min-height: 52px; font-size: 18px">
+            </div>
+          </sc-for>
+          <button type="button" onClick="{{ saveMeasurement }}" class="btn btn-primary" style="min-height: 52px; justify-content: flex-start; padding: 0 20px; font-size: 14px; letter-spacing: 0.01em">Save entry</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 20px">
+          <sc-for list="{{ charts }}" as="c" hint-placeholder-count="3">
+            <div style="border: 1px solid var(--line); border-radius: 18px; padding: 16px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 10px">
+                <div style="font-size: 12.5px; white-space: nowrap; flex-shrink: 0">{{ c.label }}</div>
+                <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 20px">{{ c.latest }}</div>
+              </div>
+              <svg viewBox="0 0 320 120" preserveAspectRatio="none" style="width: 100%; height: 120px; display: block; background: var(--bg1)">
+                <line x1="0" y1="119" x2="320" y2="119" stroke="#232838" stroke-width="2" vector-effect="non-scaling-stroke"></line>
+                <polyline points="{{ c.points }}" fill="none" stroke="#3b6bff" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>
+                <sc-for list="{{ c.dots }}" as="d" hint-placeholder-count="0">
+                  <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3" fill="#f4f6fb" vector-effect="non-scaling-stroke"></circle>
+                </sc-for>
+              </svg>
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--faint); margin-top: 6px">
+                <span>{{ c.first }}</span>
+                <span>{{ c.range }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <h2 style="font-size: 13px; letter-spacing: 0.01em; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 30px 0 14px">Workout history</h2>
+        <sc-if value="{{ hasHistory }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <sc-for list="{{ history }}" as="h" hint-placeholder-count="0">
+              <div style="border: 1px solid var(--line); border-radius: 18px; padding: 14px">
+                <div style="display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline">
+                  <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 17px">{{ h.day }}</span>
+                  <span style="font-size: 12px; letter-spacing: 0.01em; color: var(--blue)">{{ h.focus }}</span>
+                  <span style="flex: 1"></span>
+                  <span style="font-size: 12px; color: var(--faint)">{{ h.date }}</span>
+                </div>
+                <div style="font-size: 13px; color: var(--dim); margin-top: 6px">{{ h.summary }}</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 4px 16px; margin-top: 10px; border-top: 1px solid var(--line); padding-top: 10px">
+                  <sc-for list="{{ h.lines }}" as="l" hint-placeholder-count="0">
+                    <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 13px">
+                      <span>{{ l.name }}</span>
+                      <span style="font-weight: 700; white-space: nowrap">{{ l.detail }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noHistory }}" hint-placeholder-val="{{ true }}">
+          <div style="border: 1px solid var(--line); border-radius: 18px; padding: 20px; font-size: 15px">No sessions logged yet. Finish a workout in workout mode and it lands here.</div>
+        </sc-if>
+
+        <button type="button" onClick="{{ resetData }}" class="btn btn-secondary" style="margin-top: 18px; min-height: 44px; font-size: 12px; letter-spacing: 0.01em">Clear all saved data</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMode }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 20px 0 0">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px">
+          <button type="button" onClick="{{ exitMode }}" class="btn btn-ghost" style="padding-left: 0; font-size: 12px; letter-spacing: 0.01em">← Exit</button>
+          <span style="flex: 1"></span>
+          <span style="font-size: 12px; letter-spacing: 0.01em; color: var(--faint)">{{ modeCounter }}</span>
+        </div>
+
+        <sc-if value="{{ modeResting }}" hint-placeholder-val="{{ false }}">
+          <div style="background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); color: #fff; border-radius: 22px; box-shadow: 0 18px 40px rgba(59,107,255,0.28); padding: 30px 24px; margin-bottom: 16px">
+            <div style="font-size: 12px; letter-spacing: 0.01em">Rest</div>
+            <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(72px, 22vw, 160px); line-height: 0.9; font-variant-numeric: tabular-nums">{{ restClock }}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px">
+              <button type="button" onClick="{{ addRest }}" class="btn" style="background: var(--bg0); color: var(--ink); min-height: 56px; padding: 0 22px; font-size: 16px; letter-spacing: 0.01em">+30 sec</button>
+              <button type="button" onClick="{{ skipRest }}" class="btn" style="background: transparent; color: var(--ink); border: 1px solid rgba(255,255,255,.55); min-height: 56px; padding: 0 22px; font-size: 16px; letter-spacing: 0.01em">Skip rest</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="border: 1px solid var(--line); border-radius: 18px; border-radius: 18px; overflow: hidden">
+          <sc-if value="{{ modeHasImg }}" hint-placeholder-val="{{ false }}"><div style="position: relative; height: clamp(220px, 50vw, 380px); background: #fff">{{ modeImg }}</div></sc-if>
+          <div style="display: flex; align-items: stretch; border-bottom: 1px solid var(--line)">
+            <div style="flex: 0 0 96px; background: var(--bg2); color: var(--gold); font-weight: 800; letter-spacing: -0.02em; font-size: 54px; display: flex; align-items: center; justify-content: center">{{ modeNum }}</div>
+            <div style="flex: 1; padding: 16px; min-width: 0">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint); margin-bottom: 6px">Current exercise</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: clamp(24px, 5.5vw, 40px); line-height: 1.05">{{ modeName }}</div>
+              <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center">
+                <span class="{{ modeLevelTag }}">{{ modeLevel }}</span>
+                <span style="font-size: 13px; color: var(--dim)">{{ modeEquip }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(120px, 100%), 1fr)); gap: 0; border-bottom: 1px solid var(--line)">
+            <div style="padding: 16px; border-right: 1px solid var(--line)">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Sets</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 40px">{{ modeSets }}</div>
+            </div>
+            <div style="padding: 16px; border-right: 1px solid var(--line)">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Reps</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 40px">{{ modeReps }}</div>
+            </div>
+            <div style="padding: 16px">
+              <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Rest</div>
+              <div style="font-weight: 800; letter-spacing: -0.02em; font-size: 40px">{{ modeRest }}</div>
+            </div>
+          </div>
+
+          <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--line)">
+            <sc-for list="{{ setRows }}" as="s" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: {{ s.bg }}; color: {{ s.fg }}; border: 1px solid var(--line); border-radius: 18px; border-radius: 18px">
+                <span style="font-weight: 800; letter-spacing: -0.02em; font-size: 16px; letter-spacing: 0.01em">{{ s.label }}</span>
+                <span style="flex: 1"></span>
+                <span style="font-size: 14px; font-weight: 700">{{ s.detail }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); gap: 12px">
+            <div class="field">
+              <label style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">{{ weightLabel }}</label>
+              <input class="input" value="{{ curWeight }}" onChange="{{ setCurWeight }}" inputMode="decimal" placeholder="0" style="width: 100%; box-sizing: border-box; min-height: 56px; font-size: 20px">
+            </div>
+            <div class="field">
+              <label style="font-size: 10px; letter-spacing: 0.01em; color: var(--faint)">Reps done</label>
+              <input class="input" value="{{ curReps }}" onChange="{{ setCurReps }}" inputMode="numeric" placeholder="0" style="width: 100%; box-sizing: border-box; min-height: 56px; font-size: 20px">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px">
+          <button type="button" onClick="{{ completeSet }}" class="btn btn-primary" style="flex: 1 1 220px; min-height: 66px; justify-content: flex-start; padding: 0 22px; font-size: 18px; letter-spacing: 0.01em">{{ setBtnLabel }}</button>
+          <button type="button" onClick="{{ nextExercise }}" class="btn btn-secondary" style="flex: 1 1 180px; min-height: 66px; justify-content: flex-start; padding: 0 22px; font-size: 16px; letter-spacing: 0.01em">{{ nextBtnLabel }}</button>
+        </div>
+
+        <div style="margin-top: 20px; border-top: 1px solid var(--line); padding-top: 12px; display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{ modeQueue }}" as="q" hint-placeholder-count="7">
+            <button type="button" onClick="{{ q.go }}" class="{{ q.cls }}" style="min-height: 44px; font-size: 13px">{{ q.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="margin-top: 40px; border-top: 1px solid var(--line); padding-top: 16px">
+      <div style="font-size: 10px; letter-spacing: 0.01em; color: var(--blue); margin-bottom: 8px">Disclaimer</div>
+      <p style="font-size: 13px; line-height: 1.6; max-width: 88ch; color: var(--dim)">This training program is designed for general fitness education. Start with manageable weights, prioritize controlled technique, and stop if you experience sharp or unusual pain. Consult a qualified professional if you have an injury, medical condition, or are unsure whether an exercise is appropriate for you.</p>
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;units&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;kg&quot;,&quot;lb&quot;],&quot;default&quot;:&quot;kg&quot;,&quot;tsType&quot;:&quot;'kg' | 'lb'&quot;,&quot;section&quot;:&quot;Preferences&quot;},&quot;autoRest&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Workout mode&quot;}}">
+const LEVEL_TAG = { LOW: 'tag lv-low', MEDIUM: 'tag lv-med', ADVANCED: 'tag lv-adv' };
+const LEVEL_NOTE = { LOW: 'Beginner-friendly', MEDIUM: 'Some technique needed', ADVANCED: 'Experienced lifters' };
+
+const IMG = {
+  "pec-deck": "uploads/WhatsApp Image 2026-09-14 at 12.42.11.jpeg",
+  "triceps-pushdown": "uploads/WhatsApp Image 2026-09-18 at 11.53.49.jpeg",
+  "overhead-triceps": "uploads/WhatsApp Image 2026-09-18 at 11.54.21.jpeg",
+  "db-bench": "uploads/WhatsApp Image 2026-09-14 at 12.44.10.jpeg",
+  "incline-db-press": "uploads/WhatsApp Image 2026-09-14 at 12.44.29.jpeg",
+  "machine-chest-press": "uploads/WhatsApp Image 2026-09-14 at 12.44.48.jpeg",
+  "lat-pulldown": "uploads/WhatsApp Image 2026-09-15 at 12.29.06.jpeg",
+  "seated-cable-row": "uploads/WhatsApp Image 2026-09-15 at 12.29.30.jpeg",
+  "chest-supported-row": "uploads/WhatsApp Image 2026-09-15 at 12.30.06.jpeg",
+  "reverse-pec-deck": "uploads/WhatsApp Image 2026-09-15 at 12.30.32.jpeg",
+  "straight-arm-pulldown": "uploads/WhatsApp Image 2026-09-15 at 12.31.24.jpeg",
+  "db-curl": "uploads/WhatsApp Image 2026-09-15 at 12.31.55.jpeg",
+  "hammer-curl": "uploads/WhatsApp Image 2026-09-15 at 12.32.27.jpeg",
+  "cable-fly": "uploads/WhatsApp Image 2026-09-18 at 11.52.20.jpeg",
+  "lateral-raise": "uploads/WhatsApp Image 2026-09-18 at 11.53.07.jpeg"
+};
+function imgEl(id) {
+  const src = IMG[id];
+  if (!src) return null;
+  return React.createElement('img', { src: encodeURI(src), alt: '', loading: 'lazy', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 8, boxSizing: 'border-box' } });
+}
+
+const EXERCISES = [
+  { id: 'db-bench', name: 'Dumbbell Bench Press', category: 'Push', muscleGroup: 'Chest', secondaryMuscles: ['Triceps', 'Front shoulders'], equipment: ['Dumbbells', 'Flat bench'], equipTags: ['Dumbbells', 'Bench'], level: 'MEDIUM', sets: 3, reps: '8-10', rest: '2-3 min', restSec: 150,
+    instructions: ['Sit on the end of the bench with a dumbbell resting on each thigh.', 'Lie back, using your knees to help lift the dumbbells to shoulder level.', 'Press both dumbbells up until your arms are almost straight, wrists stacked over elbows.', 'Lower under control until your upper arms are roughly level with your torso.', 'Keep both feet flat and press again without bouncing at the bottom.'],
+    setup: 'Flat bench, dumbbells racked at the end so you can pick them up seated. Start light enough that you can complete all reps with the same tempo.',
+    formCues: ['Shoulder blades pulled back and down into the bench.', 'Elbows about 45-60 degrees from your body, not flared straight out.', 'Two seconds down, controlled press up.'],
+    commonMistakes: ['Letting the dumbbells drift toward the head instead of over the chest.', 'Bouncing the weights off the chest at the bottom.', 'Lifting the hips off the bench to move heavier weight.'],
+    safetyNotes: 'No exercise is risk-free. If you train without a spotter, keep the weight conservative and stop a set with two reps still in reserve.',
+    alternatives: ['machine-chest-press', 'incline-db-press'] },
+  { id: 'incline-db-press', name: 'Incline Dumbbell Press', category: 'Push', muscleGroup: 'Chest', secondaryMuscles: ['Front shoulders', 'Triceps'], equipment: ['Dumbbells', 'Adjustable bench'], equipTags: ['Dumbbells', 'Bench'], level: 'MEDIUM', sets: 3, reps: '8-12', rest: '2 min', restSec: 120,
+    instructions: ['Set the bench to roughly 30-45 degrees.', 'Sit back with a dumbbell on each thigh, then bring them to shoulder height.', 'Press up and slightly inward until the arms are nearly straight.', 'Lower slowly until you feel a stretch across the upper chest.', 'Keep your head, upper back and hips in contact with the bench throughout.'],
+    setup: 'Adjustable bench at 30-45 degrees. Steeper angles shift work to the shoulders, so stay near the lower end for chest.',
+    formCues: ['Chest up, ribcage proud.', 'Wrists directly above elbows at every point.', 'Stop the descent when the stretch appears, not when the dumbbells hit your chest.'],
+    commonMistakes: ['Setting the bench too upright and turning it into a shoulder press.', 'Letting the elbows collapse toward the hips.'],
+    safetyNotes: 'Reduce the range of motion if you feel pinching at the front of the shoulder.',
+    alternatives: ['machine-chest-press', 'db-bench'] },
+  { id: 'machine-chest-press', name: 'Machine Chest Press', category: 'Push', muscleGroup: 'Chest', secondaryMuscles: ['Triceps', 'Front shoulders'], equipment: ['Chest press machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '8-12', rest: '2 min', restSec: 120,
+    instructions: ['Set the seat so the handles sit at mid-chest height.', 'Sit tall with your back flat against the pad.', 'Press the handles forward until your arms are nearly straight.', 'Return slowly until you feel a light stretch in the chest.', 'Keep tension by stopping just short of the weight stack resting.'],
+    setup: 'Adjust seat height first, then pick a load you can control for all reps. Handles should track along your mid-chest, not your neck.',
+    formCues: ['Back and head against the pad.', 'Press with the palms, not the fingertips.', 'Do not lock out hard at the end.'],
+    commonMistakes: ['Seat too low, pressing upward at the neck.', 'Letting the weight slam down between reps.'],
+    safetyNotes: 'A fixed path is stable but not risk-free; stop if the shoulder feels pinched at the back of the movement.',
+    alternatives: ['db-bench', 'incline-db-press'] },
+  { id: 'pec-deck', name: 'Pec Deck', category: 'Push', muscleGroup: 'Chest', secondaryMuscles: ['Front shoulders'], equipment: ['Pec-deck machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90,
+    instructions: ['Set the seat so your elbows or forearms meet the pads at chest height.', 'Sit back with your shoulder blades on the backrest.', 'Bring the pads together in front of your chest.', 'Pause briefly, then open slowly to a comfortable stretch.', 'Keep the elbows at the same angle the whole set.'],
+    setup: 'Seat height so the pads sit level with your mid-chest. Set the starting-range lever so the stretch is comfortable, not extreme.',
+    formCues: ['Squeeze the chest, do not push with the hands.', 'Elbows stay slightly below shoulder height.', 'Control the opening phase.'],
+    commonMistakes: ['Using a range so wide it strains the front of the shoulder.', 'Swinging the pads together with momentum.'],
+    safetyNotes: 'Shorten the range if you feel any pull at the front of the shoulder joint.',
+    alternatives: ['cable-fly', 'machine-chest-press'] },
+  { id: 'cable-fly', name: 'Cable Chest Fly', category: 'Push', muscleGroup: 'Chest', secondaryMuscles: ['Front shoulders'], equipment: ['Cable machine'], equipTags: ['Cable'], level: 'MEDIUM', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Set both pulleys at roughly shoulder height and select a light load.', 'Take a handle in each hand and step forward into a staggered stance.', 'With a slight bend in the elbows, bring both hands together in front of your chest.', 'Pause, then let the arms open slowly and under tension.', 'Keep the torso still — only the arms move.'],
+    setup: 'Two pulleys at shoulder height. One foot forward for balance. Load light: this is a control exercise, not a strength lift.',
+    formCues: ['Fixed, slight elbow bend throughout.', 'Lead with the elbows, not the hands.', 'Stay leaning very slightly forward.'],
+    commonMistakes: ['Turning it into a press by bending and straightening the elbows.', 'Going too heavy and rocking the torso.'],
+    safetyNotes: 'Keep the hands in view; do not let the arms travel far behind the torso.',
+    alternatives: ['pec-deck', 'machine-chest-press'] },
+  { id: 'triceps-pushdown', name: 'Cable Triceps Pushdown', category: 'Push', muscleGroup: 'Triceps', secondaryMuscles: ['Front shoulders'], equipment: ['Cable machine', 'Rope or bar'], equipTags: ['Cable'], level: 'LOW', sets: 3, reps: '10-12', rest: '60-90 sec', restSec: 75,
+    instructions: ['Attach a rope or straight bar at upper-chest height or above.', 'Stand close to the machine with a small forward lean.', 'Pin your elbows to your sides and push the attachment down until the arms are straight.', 'Squeeze briefly at the bottom.', 'Let the attachment rise until your forearms are level, keeping the elbows still.'],
+    setup: 'Pulley set high. Stand about one step back so the cable does not rub your chest.',
+    formCues: ['Upper arms stay vertical and still.', 'Wrists neutral, not bent.', 'Full extension without locking hard.'],
+    commonMistakes: ['Letting the elbows drift forward and turning it into a press.', 'Leaning and using bodyweight to force the weight down.'],
+    safetyNotes: 'Stop if the elbow joint aches rather than the muscle; lower the load and shorten the range.',
+    alternatives: ['overhead-triceps', 'machine-chest-press'] },
+  { id: 'overhead-triceps', name: 'Overhead Cable Triceps Extension', category: 'Push', muscleGroup: 'Triceps', secondaryMuscles: ['Shoulders'], equipment: ['Cable machine', 'Rope'], equipTags: ['Cable'], level: 'MEDIUM', sets: 3, reps: '10-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Set the pulley low to mid height and attach a rope.', 'Take the rope, turn away from the machine and raise it overhead.', 'Step into a staggered stance with a slight forward lean.', 'Extend the arms forward and up until straight.', 'Bend the elbows slowly until you feel a stretch behind the upper arm.'],
+    setup: 'Rope attachment, pulley at hip to chest height. Face away from the stack with one foot forward.',
+    formCues: ['Elbows point forward and stay close together.', 'Ribs down, do not arch the lower back.', 'Move only at the elbow.'],
+    commonMistakes: ['Arching the back to press the weight.', 'Letting the elbows flare wide.'],
+    safetyNotes: 'Keep the load moderate — the overhead position puts the shoulder in a long range.',
+    alternatives: ['triceps-pushdown'] },
+  { id: 'lat-pulldown', name: 'Lat Pulldown', category: 'Pull', muscleGroup: 'Back', secondaryMuscles: ['Biceps', 'Rear shoulders'], equipment: ['Lat-pulldown machine'], equipTags: ['Machine', 'Cable'], level: 'LOW', sets: 3, reps: '8-12', rest: '2 min', restSec: 120,
+    instructions: ['Set the thigh pad so your legs are held firmly.', 'Take a shoulder-width-plus grip on the bar and sit down.', 'Lean back very slightly and pull the bar to your upper chest.', 'Drive the elbows down toward your ribs.', 'Return the bar slowly until your arms are straight and shoulders lift a little.'],
+    setup: 'Thigh pad snug, grip a hand-width wider than the shoulders on each side.',
+    formCues: ['Pull with the elbows, not the hands.', 'Chest up as the bar comes down.', 'No swinging of the torso.'],
+    commonMistakes: ['Leaning far back and rowing instead of pulling down.', 'Pulling the bar behind the neck.'],
+    safetyNotes: 'Always pull to the front of the body, never behind the neck.',
+    alternatives: ['seated-cable-row', 'straight-arm-pulldown'] },
+  { id: 'seated-cable-row', name: 'Seated Cable Row', category: 'Pull', muscleGroup: 'Back', secondaryMuscles: ['Biceps', 'Rear shoulders'], equipment: ['Seated cable-row machine'], equipTags: ['Cable', 'Machine'], level: 'LOW', sets: 3, reps: '8-12', rest: '2 min', restSec: 120,
+    instructions: ['Sit with feet on the platform and a slight bend in the knees.', 'Take the handle and sit up tall with a flat back.', 'Pull the handle to your lower ribs, elbows close to the body.', 'Squeeze the shoulder blades together briefly.', 'Let the handle travel forward slowly without rounding the back.'],
+    setup: 'Feet braced, knees softly bent. Chest stays lifted for the whole set.',
+    formCues: ['Torso stays still — no rocking.', 'Lead with the elbows.', 'Slow return, full stretch.'],
+    commonMistakes: ['Swinging the torso back and forth.', 'Rounding the lower back at the front of the movement.'],
+    safetyNotes: 'Keep the spine neutral; do not use a heavy load that forces you to lean.',
+    alternatives: ['chest-supported-row', 'lat-pulldown'] },
+  { id: 'chest-supported-row', name: 'Chest-Supported Row', category: 'Pull', muscleGroup: 'Back', secondaryMuscles: ['Biceps', 'Rear shoulders'], equipment: ['Chest-supported row machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '10-12', rest: '90 sec', restSec: 90,
+    instructions: ['Set the seat and chest pad so the handles are at mid-torso height.', 'Rest your chest on the pad with feet planted.', 'Row the handles back, elbows close to your sides.', 'Squeeze the shoulder blades at the end.', 'Return under control to a full stretch.'],
+    setup: 'Chest pad height so your arms reach the handles without shrugging. The pad takes the lower back out of the movement.',
+    formCues: ['Chest stays in contact with the pad.', 'Elbows finish behind the torso.', 'No shrugging at the top.'],
+    commonMistakes: ['Pulling the chest off the pad to add range.', 'Using only the arms without moving the shoulder blades.'],
+    safetyNotes: 'Stable and beginner-friendly, but still work up in small load steps.',
+    alternatives: ['seated-cable-row', 'lat-pulldown'] },
+  { id: 'reverse-pec-deck', name: 'Reverse Pec Deck', category: 'Pull', muscleGroup: 'Shoulders', secondaryMuscles: ['Upper back'], equipment: ['Reverse pec-deck machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '12-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Turn the seat or pads so you face the backrest.', 'Set the seat so the handles are at shoulder height.', 'Hold the handles with straight-ish arms.', 'Open the arms out and slightly back until level with your shoulders.', 'Return slowly to the front.'],
+    setup: 'Facing the pad, chest supported, handles at shoulder height with a small elbow bend.',
+    formCues: ['Lead with the little fingers.', 'Keep the neck relaxed.', 'Stop when the arms reach the shoulder line.'],
+    commonMistakes: ['Shrugging the shoulders up during the pull.', 'Bending and straightening the elbows to cheat the weight back.'],
+    safetyNotes: 'Light loads work best here; heavy weight turns it into a swing.',
+    alternatives: ['lateral-raise', 'chest-supported-row'] },
+  { id: 'straight-arm-pulldown', name: 'Straight-Arm Cable Pulldown', category: 'Pull', muscleGroup: 'Back', secondaryMuscles: ['Triceps', 'Core'], equipment: ['Cable machine'], equipTags: ['Cable'], level: 'MEDIUM', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Set the pulley high with a straight bar or rope.', 'Stand a step back and hinge forward slightly at the hips.', 'With near-straight arms, pull the attachment down to your thighs.', 'Feel the contraction along the sides of your back.', 'Let the arms rise slowly back to head height.'],
+    setup: 'High pulley, feet hip-width, small hip hinge and a flat back.',
+    formCues: ['Elbows stay almost locked.', 'Only the shoulders move.', 'Ribs down, no back arch.'],
+    commonMistakes: ['Bending the elbows into a pushdown.', 'Standing too upright and losing tension.'],
+    safetyNotes: 'Keep the load light and the spine neutral during the hinge.',
+    alternatives: ['lat-pulldown', 'seated-cable-row'] },
+  { id: 'db-curl', name: 'Dumbbell Biceps Curl', category: 'Pull', muscleGroup: 'Biceps', secondaryMuscles: ['Forearms'], equipment: ['Dumbbells'], equipTags: ['Dumbbells'], level: 'LOW', sets: 3, reps: '8-12', rest: '90 sec', restSec: 90,
+    instructions: ['Stand tall with a dumbbell in each hand, palms forward.', 'Keep the elbows at your sides and curl one or both dumbbells up.', 'Stop when the forearm is just past vertical.', 'Lower slowly until the arm is straight.', 'Keep the torso still for every rep.'],
+    setup: 'Standing or seated on an upright bench. Pick a weight you can lift without leaning back.',
+    formCues: ['Elbows pinned to the ribs.', 'Squeeze at the top, do not rest there.', 'Three-second lowering.'],
+    commonMistakes: ['Swinging the torso to start the rep.', 'Stopping halfway down instead of straightening the arm.'],
+    safetyNotes: 'If the elbow or wrist aches, switch to a hammer grip.',
+    alternatives: ['hammer-curl'] },
+  { id: 'hammer-curl', name: 'Hammer Curl', category: 'Pull', muscleGroup: 'Biceps', secondaryMuscles: ['Forearms'], equipment: ['Dumbbells'], equipTags: ['Dumbbells'], level: 'LOW', sets: 3, reps: '10-12', rest: '60-90 sec', restSec: 75,
+    instructions: ['Stand with a dumbbell in each hand, palms facing your thighs.', 'Keep that neutral grip and curl the dumbbell toward the shoulder.', 'Pause at the top without shrugging.', 'Lower slowly to a straight arm.', 'Alternate arms or lift both together.'],
+    setup: 'Neutral grip, elbows at your sides, feet hip-width.',
+    formCues: ['Thumbs stay up the whole rep.', 'Elbows do not travel forward.', 'Controlled tempo both directions.'],
+    commonMistakes: ['Rocking the body to move heavier dumbbells.', 'Cutting the lowering phase short.'],
+    safetyNotes: 'Comfortable for most wrists; still stop if you feel joint pain rather than muscle fatigue.',
+    alternatives: ['db-curl'] },
+  { id: 'lateral-raise', name: 'Dumbbell Lateral Raise', category: 'Push', muscleGroup: 'Shoulders', secondaryMuscles: ['Upper back'], equipment: ['Dumbbells'], equipTags: ['Dumbbells'], level: 'LOW', sets: 3, reps: '12-20', rest: '60 sec', restSec: 60,
+    instructions: ['Stand with a light dumbbell in each hand at your sides.', 'Bend the elbows slightly and lean forward a few degrees.', 'Raise both arms out to the sides until level with the shoulders.', 'Pause, then lower slowly.', 'Keep the neck and traps relaxed.'],
+    setup: 'Light dumbbells — much lighter than you expect. Standing, feet hip-width.',
+    formCues: ['Lead with the elbows.', 'Wrists level with the elbows, not higher.', 'No shrugging.'],
+    commonMistakes: ['Swinging the dumbbells up with a hip bounce.', 'Raising the arms above shoulder height.'],
+    safetyNotes: 'Stop at shoulder height; higher raises stress the shoulder joint.',
+    alternatives: ['reverse-pec-deck'] },
+  { id: 'leg-press', name: 'Leg Press Machine', category: 'Legs', muscleGroup: 'Legs', secondaryMuscles: ['Glutes', 'Hamstrings'], equipment: ['Leg press machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '10-12', rest: '2-3 min', restSec: 150,
+    instructions: ['Sit with your back and hips flat against the pad.', 'Place your feet shoulder-width on the platform, toes slightly out.', 'Release the safety and press the platform up until the legs are nearly straight.', 'Lower until the knees reach roughly 90 degrees.', 'Press again without letting the lower back round off the pad.'],
+    setup: 'Back pad set so your knees start at about 90 degrees and your hips stay flat.',
+    formCues: ['Whole foot stays in contact with the platform.', 'Knees track over the toes.', 'Never lock the knees hard at the top.'],
+    commonMistakes: ['Lowering so far that the hips lift and the back rounds.', 'Letting the knees fall inward.'],
+    safetyNotes: 'Keep the safety catches engaged and stop the descent before your hips leave the pad.',
+    alternatives: ['leg-extension'] },
+  { id: 'leg-extension', name: 'Leg Extension Machine', category: 'Legs', muscleGroup: 'Legs', secondaryMuscles: ['Quadriceps'], equipment: ['Leg extension machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90,
+    instructions: ['Set the seat so the knee joint lines up with the machine pivot.', 'Place the shin pad just above the ankles.', 'Sit back and extend the knees until the legs are straight.', 'Pause for a moment at the top.', 'Lower slowly to the starting position.'],
+    setup: 'Seat back and pad position set first; the knee must align with the pivot point.',
+    formCues: ['Hips stay in the seat.', 'Squeeze the thigh at the top.', 'Smooth tempo, no kicking.'],
+    commonMistakes: ['Swinging the weight up with a jerk.', 'Letting the weight drop back down freely.'],
+    safetyNotes: 'Reduce the load if you feel pressure behind the kneecap.',
+    alternatives: ['leg-press'] },
+  { id: 'leg-curl', name: 'Seated / Lying Leg Curl', category: 'Legs', muscleGroup: 'Legs', secondaryMuscles: ['Hamstrings', 'Calves'], equipment: ['Leg curl machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90,
+    instructions: ['Adjust the machine so your knees sit at the pivot and the pad rests above the heels.', 'Secure the thigh pad if the machine has one.', 'Curl your heels toward your hips.', 'Hold the end position briefly.', 'Return slowly until the legs are almost straight.'],
+    setup: 'Knee at the pivot, ankle pad just above the heel, thigh pad snug.',
+    formCues: ['Hips stay down through the curl.', 'Toes relaxed.', 'Control the return.'],
+    commonMistakes: ['Lifting the hips to finish the rep.', 'Using a range so short the hamstring never lengthens.'],
+    safetyNotes: 'Warm up with one light set before your working sets.',
+    alternatives: ['leg-press'] },
+  { id: 'hip-abductor', name: 'Hip Abductor Machine', category: 'Legs', muscleGroup: 'Legs', secondaryMuscles: ['Glutes'], equipment: ['Hip abductor machine'], equipTags: ['Machine'], level: 'LOW', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Sit with your back against the pad and knees against the outer pads.', 'Set the starting width so the position feels comfortable.', 'Push the knees outward as far as the machine allows.', 'Pause at the widest point.', 'Return slowly without letting the pads slam.'],
+    setup: 'Back flat, feet on the rests, starting width narrow but not pinched.',
+    formCues: ['Sit upright, do not lean back hard.', 'Push through the outside of the knees.', 'Two-second return.'],
+    commonMistakes: ['Rocking the torso for momentum.', 'Rushing the return phase.'],
+    safetyNotes: 'Keep the range within what feels comfortable at the hip.',
+    alternatives: ['leg-press'] },
+  { id: 'calf-raise', name: 'Calf Raise Machine', category: 'Legs', muscleGroup: 'Calves', secondaryMuscles: ['Ankles'], equipment: ['Calf raise machine'], equipTags: ['Machine'], level: 'LOW', sets: 3, reps: '12-15', rest: '60-90 sec', restSec: 75,
+    instructions: ['Place the balls of your feet on the platform with heels hanging off.', 'Set the shoulder or thigh pad snug.', 'Rise onto your toes as high as possible.', 'Pause at the top for a full second.', 'Lower the heels slowly to a stretch.'],
+    setup: 'Balls of the feet on the edge of the platform, knees almost straight for the standing version.',
+    formCues: ['Full range: deep stretch, high squeeze.', 'One-second hold at the top.', 'No bouncing.'],
+    commonMistakes: ['Fast, short bounces with no pause.', 'Bending the knees to push the weight.'],
+    safetyNotes: 'Ease into the bottom stretch, especially in the first sessions.',
+    alternatives: ['leg-press'] }
+];
+
+const DAYS = [
+  { key: 'MON', name: 'Monday', focus: 'Chest + Triceps', items: [
+    { id: 'db-bench', sets: 3, reps: '8-10', rest: '2-3 min', restSec: 150 },
+    { id: 'incline-db-press', sets: 3, reps: '8-12', rest: '2 min', restSec: 120 },
+    { id: 'machine-chest-press', sets: 3, reps: '8-12', rest: '2 min', restSec: 120 },
+    { id: 'pec-deck', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90 },
+    { id: 'cable-fly', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'triceps-pushdown', sets: 3, reps: '10-12', rest: '60-90 sec', restSec: 75 },
+    { id: 'overhead-triceps', sets: 3, reps: '10-15', rest: '60-90 sec', restSec: 75 } ] },
+  { key: 'TUE', name: 'Tuesday', focus: 'Back + Biceps', items: [
+    { id: 'lat-pulldown', sets: 3, reps: '8-12', rest: '2 min', restSec: 120 },
+    { id: 'seated-cable-row', sets: 3, reps: '8-12', rest: '2 min', restSec: 120 },
+    { id: 'chest-supported-row', sets: 3, reps: '10-12', rest: '90 sec', restSec: 90 },
+    { id: 'reverse-pec-deck', sets: 3, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'straight-arm-pulldown', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'db-curl', sets: 3, reps: '8-12', rest: '90 sec', restSec: 90 },
+    { id: 'hammer-curl', sets: 3, reps: '10-12', rest: '60-90 sec', restSec: 75 } ] },
+  { key: 'WED', name: 'Wednesday', focus: 'Recovery', rest: true, items: [] },
+  { key: 'THU', name: 'Thursday', focus: 'Chest + Shoulders + Triceps', items: [
+    { id: 'incline-db-press', sets: 3, reps: '8-10', rest: '2-3 min', restSec: 150 },
+    { id: 'machine-chest-press', sets: 3, reps: '8-12', rest: '2 min', restSec: 120 },
+    { id: 'pec-deck', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90 },
+    { id: 'cable-fly', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'lateral-raise', sets: 3, reps: '12-20', rest: '60 sec', restSec: 60 },
+    { id: 'triceps-pushdown', sets: 3, reps: '10-12', rest: '60-90 sec', restSec: 75 },
+    { id: 'overhead-triceps', sets: 3, reps: '10-15', rest: '60-90 sec', restSec: 75 } ] },
+  { key: 'FRI', name: 'Friday', focus: 'Legs + Biceps', items: [
+    { id: 'leg-press', sets: 3, reps: '10-12', rest: '2-3 min', restSec: 150 },
+    { id: 'leg-extension', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90 },
+    { id: 'leg-curl', sets: 3, reps: '10-15', rest: '90 sec', restSec: 90 },
+    { id: 'hip-abductor', sets: 2, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'calf-raise', sets: 3, reps: '12-15', rest: '60-90 sec', restSec: 75 },
+    { id: 'db-curl', sets: 3, reps: '8-12', rest: '90 sec', restSec: 90 },
+    { id: 'hammer-curl', sets: 3, reps: '10-15', rest: '60-90 sec', restSec: 75 } ] },
+  { key: 'SAT', name: 'Saturday', focus: 'Rest', rest: true, items: [] },
+  { key: 'SUN', name: 'Sunday', focus: 'Rest', rest: true, items: [] }
+];
+
+const FILTERS = [
+  { key: 'muscle', label: 'Muscle', opts: ['Chest', 'Back', 'Biceps', 'Triceps', 'Shoulders', 'Legs', 'Calves'] },
+  { key: 'level', label: 'Difficulty', opts: ['LOW', 'MEDIUM', 'ADVANCED'] },
+  { key: 'equip', label: 'Equipment', opts: ['Dumbbells', 'Cable', 'Machine', 'Bench'] },
+  { key: 'type', label: 'Training type', opts: ['Push', 'Pull', 'Legs'] }
+];
+
+const KEY = 'fitprog.v1';
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+    const today = (new Date().getDay() + 6) % 7;
+    this.state = {
+      view: 'home', dayIdx: today, exId: null, from: 'home',
+      search: '', filters: { muscle: [], level: [], equip: [], type: [] },
+      mode: null, resting: false, restLeft: 0, curWeight: '', curReps: '',
+      draftW: '', draftC: '', draftA: '',
+      history: saved.history || [], measurements: saved.measurements || []
+    };
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (this.state.resting) {
+        this.setState(s => {
+          const left = s.restLeft - 1;
+          return left <= 0 ? { resting: false, restLeft: 0 } : { restLeft: left };
+        });
+      }
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  save(patch) {
+    this.setState(patch, () => {
+      try { localStorage.setItem(KEY, JSON.stringify({ history: this.state.history, measurements: this.state.measurements })); } catch (e) {}
+    });
+  }
+
+  ex(id) { return EXERCISES.find(e => e.id === id); }
+  unit() { return (this.props.units || 'kg') === 'lb' ? { w: 'lb', l: 'in' } : { w: 'kg', l: 'cm' }; }
+  clock(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return m + ':' + (s < 10 ? '0' + s : s);
+  }
+  duration(day) {
+    if (!day.items.length) return '—';
+    let sec = 300;
+    day.items.forEach(it => { sec += it.sets * (90 + it.restSec); });
+    const min = Math.round(sec / 60);
+    return '~' + (min - 5) + '-' + (min + 5) + ' min';
+  }
+  muscles(day) {
+    const seen = [];
+    day.items.forEach(it => { const m = this.ex(it.id).muscleGroup; if (seen.indexOf(m) < 0) seen.push(m); });
+    return seen.join(' · ') || 'Recovery';
+  }
+  dayLevel(day) {
+    if (!day.items.length) return '—';
+    return day.items.some(it => this.ex(it.id).level === 'MEDIUM') ? 'Low / Medium' : 'Low';
+  }
+  open(exId, from) { this.setState({ view: 'exercise', exId, from }); }
+
+  startMode(dayIdx) {
+    const day = DAYS[dayIdx];
+    if (!day.items.length) return;
+    this.setState({ view: 'mode', dayIdx, mode: { dayIdx, idx: 0, done: {} }, resting: false, restLeft: 0, curWeight: '', curReps: '' });
+  }
+
+  completeSet() {
+    const m = this.state.mode; if (!m) return;
+    const day = DAYS[m.dayIdx], item = day.items[m.idx];
+    const done = Object.assign({}, m.done);
+    const list = (done[item.id] || []).slice();
+    if (list.length >= item.sets) return;
+    list.push({ w: this.state.curWeight, r: this.state.curReps || item.reps });
+    done[item.id] = list;
+    const finished = list.length >= item.sets;
+    const auto = this.props.autoRest !== false;
+    this.setState({ mode: Object.assign({}, m, { done }), curReps: '', resting: !finished && auto, restLeft: !finished && auto ? item.restSec : 0 });
+  }
+
+  nextExercise() {
+    const m = this.state.mode; if (!m) return;
+    const day = DAYS[m.dayIdx];
+    if (m.idx + 1 >= day.items.length) return this.finishSession();
+    this.setState({ mode: Object.assign({}, m, { idx: m.idx + 1 }), resting: false, restLeft: 0, curWeight: '', curReps: '' });
+  }
+
+  finishSession() {
+    const m = this.state.mode; if (!m) return;
+    const day = DAYS[m.dayIdx];
+    const lines = day.items.filter(it => (m.done[it.id] || []).length).map(it => ({ id: it.id, name: this.ex(it.id).name, sets: m.done[it.id] }));
+    const entry = { date: new Date().toISOString().slice(0, 10), day: day.name, focus: day.focus, lines };
+    const history = lines.length ? [entry].concat(this.state.history).slice(0, 40) : this.state.history;
+    this.save({ history, mode: null, resting: false, restLeft: 0, view: 'progress' });
+  }
+
+  chart(field, label, unit) {
+    const rows = this.state.measurements.filter(m => m[field] != null && m[field] !== '');
+    const vals = rows.map(r => Number(r[field]));
+    if (!vals.length) return { label, latest: '—', points: '', dots: [], first: 'No entries yet', range: '' };
+    const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+    const span = max - min || 1;
+    const dots = vals.map((v, i) => ({
+      x: vals.length === 1 ? 160 : Math.round(10 + (300 * i) / (vals.length - 1)),
+      y: Math.round(104 - ((v - min) / span) * 88) + 8
+    }));
+    return {
+      label, latest: vals[vals.length - 1] + ' ' + unit,
+      points: dots.map(d => d.x + ',' + d.y).join(' '), dots,
+      first: rows[0].date, range: min + '-' + max + ' ' + unit
+    };
+  }
+
+  saveMeasurement() {
+    const { draftW, draftC, draftA } = this.state;
+    if (!draftW && !draftC && !draftA) return;
+    const entry = { date: new Date().toISOString().slice(0, 10), weight: draftW, chest: draftC, arm: draftA };
+    this.save({ measurements: this.state.measurements.concat([entry]), draftW: '', draftC: '', draftA: '' });
+  }
+
+  toggleFilter(key, val) {
+    const cur = this.state.filters[key] || [];
+    const next = cur.indexOf(val) < 0 ? cur.concat([val]) : cur.filter(v => v !== val);
+    this.setState({ filters: Object.assign({}, this.state.filters, { [key]: next }) });
+  }
+
+  renderVals() {
+    const s = this.state, u = this.unit();
+    const view = s.view;
+    const day = DAYS[s.dayIdx] || DAYS[0];
+    const today = DAYS[(new Date().getDay() + 6) % 7];
+    const todayIdx = (new Date().getDay() + 6) % 7;
+    const nav = [['home', 'Home'], ['schedule', 'Schedule'], ['library', 'Exercises'], ['progress', 'Progress']];
+    const activeNav = view === 'day' ? 'schedule' : (view === 'exercise' ? 'library' : (view === 'mode' ? 'schedule' : view));
+
+    // today's live progress
+    const m = s.mode;
+    let doneSets = 0, totalSets = 0;
+    today.items.forEach(it => { totalSets += it.sets; });
+    if (m && m.dayIdx === todayIdx) today.items.forEach(it => { doneSets += ((m.done[it.id] || []).length); });
+    const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
+
+    const vals = {
+      unitLabel: 'Units: ' + u.w + ' / ' + u.l,
+      navItems: nav.map(([k, label]) => ({
+        label,
+        cls: activeNav === k ? 'btn pill is-on' : 'btn pill',
+        bg: activeNav === k ? '#3b6bff' : 'transparent',
+        fg: activeNav === k ? '#fff' : 'var(--dim)',
+        weight: activeNav === k ? '700' : '600',
+        go: () => this.setState({ view: k === 'schedule' ? 'day' : k })
+      })),
+      isHome: view === 'home', isDay: view === 'day', isEx: view === 'exercise',
+      isLib: view === 'library', isProg: view === 'progress', isMode: view === 'mode',
+
+      todayDate: new Date().toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+      todayName: today.name, todayFocus: today.focus,
+      hasTodayWorkout: today.items.length > 0, isRestToday: today.items.length === 0,
+      todayStats: [
+        { label: 'Exercises', value: today.items.length ? today.items.length + ' exercises' : 'Rest day' },
+        { label: 'Duration', value: this.duration(today) },
+        { label: 'Muscle groups', value: this.muscles(today) },
+        { label: 'Difficulty', value: this.dayLevel(today) }
+      ],
+      progLabel: doneSets + ' / ' + totalSets + ' sets · ' + pct + '%',
+      progPct: pct + '%',
+      startTodayLabel: m && m.dayIdx === todayIdx ? 'Resume workout' : 'Start workout',
+      startToday: () => (m && m.dayIdx === todayIdx ? this.setState({ view: 'mode' }) : this.startMode(todayIdx)),
+      openToday: () => this.setState({ view: 'day', dayIdx: todayIdx }),
+      week: DAYS.map((d, i) => ({
+        name: d.name, focus: d.focus,
+        meta: d.items.length ? d.items.length + ' exercises · ' + this.duration(d) : 'Recovery',
+        edge: i === todayIdx ? '#3b6bff' : (d.items.length ? '#39405a' : '#232838'),
+        open: () => this.setState({ view: 'day', dayIdx: i })
+      })),
+
+      dayName: day.name, dayFocus: day.focus,
+      dayCount: day.items.length ? day.items.length + ' exercises' : 'No resistance training',
+      dayDuration: this.duration(day), dayMuscles: this.muscles(day),
+      dayIsRest: day.items.length === 0, dayHasWork: day.items.length > 0,
+      restCopy: 'No resistance training today. Optional: walking, light stretching, hydration, sleep.',
+      dayItems: day.items.map((it, i) => {
+        const e = this.ex(it.id);
+        return { n: i + 1, name: e.name, muscle: e.muscleGroup, level: e.level, levelTag: LEVEL_TAG[e.level],
+          equipment: e.equipment.join(' + '), setsReps: it.sets + ' × ' + it.reps, rest: it.rest,
+          hasImg: !!IMG[it.id], imgEl: imgEl(it.id),
+          open: () => this.open(it.id, 'day') };
+      }),
+      backHome: () => this.setState({ view: 'home' }),
+      startDay: () => this.startMode(s.dayIdx),
+      back: () => this.setState({ view: s.from === 'day' ? 'day' : 'library' }),
+
+      search: s.search,
+      setSearch: (e) => this.setState({ search: e.target.value }),
+      filterGroups: FILTERS.map(f => ({
+        label: f.label,
+        chips: f.opts.map(o => ({
+          label: o,
+          cls: (s.filters[f.key] || []).indexOf(o) >= 0 ? 'btn pill btn-primary is-on' : 'btn pill btn-secondary',
+          toggle: () => this.toggleFilter(f.key, o)
+        }))
+      })),
+      clearFilters: () => this.setState({ filters: { muscle: [], level: [], equip: [], type: [] }, search: '' }),
+
+      progStats: [
+        { label: 'Sessions logged', value: String(s.history.length) },
+        { label: 'Sets logged', value: String(s.history.reduce((a, h) => a + h.lines.reduce((b, l) => b + l.sets.length, 0), 0)) },
+        { label: 'Body weight', value: this.latest('weight', u.w) },
+        { label: 'Arm', value: this.latest('arm', u.l) }
+      ],
+      measureFields: [
+        { label: 'Body weight (' + u.w + ')', value: s.draftW, onChange: (e) => this.setState({ draftW: e.target.value }) },
+        { label: 'Chest (' + u.l + ')', value: s.draftC, onChange: (e) => this.setState({ draftC: e.target.value }) },
+        { label: 'Arm (' + u.l + ')', value: s.draftA, onChange: (e) => this.setState({ draftA: e.target.value }) }
+      ],
+      saveMeasurement: () => this.saveMeasurement(),
+      charts: [this.chart('weight', 'Body weight', u.w), this.chart('chest', 'Chest', u.l), this.chart('arm', 'Arm', u.l)],
+      hasHistory: s.history.length > 0, noHistory: s.history.length === 0,
+      history: s.history.map(h => ({
+        day: h.day, focus: h.focus, date: h.date,
+        summary: h.lines.length + (h.lines.length === 1 ? ' exercise · ' : ' exercises · ') + (() => { const n = h.lines.reduce((a, l) => a + l.sets.length, 0); return n + (n === 1 ? ' set' : ' sets'); })(),
+        lines: h.lines.map(l => ({ name: l.name, detail: l.sets.map(x => (x.w ? x.w + u.w + ' × ' : '') + x.r).join(', ') }))
+      })),
+      resetData: () => { try { localStorage.removeItem(KEY); } catch (e) {} this.setState({ history: [], measurements: [] }); }
+    };
+
+    // library results
+    const f = s.filters, q = s.search.trim().toLowerCase();
+    const results = EXERCISES.filter(e => {
+      if (f.muscle.length && f.muscle.indexOf(e.muscleGroup) < 0) return false;
+      if (f.level.length && f.level.indexOf(e.level) < 0) return false;
+      if (f.type.length && f.type.indexOf(e.category) < 0) return false;
+      if (f.equip.length && !f.equip.some(t => e.equipTags.indexOf(t) >= 0)) return false;
+      if (q && (e.name + ' ' + e.muscleGroup + ' ' + e.equipment.join(' ')).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+    vals.results = results.map(e => ({
+      hasImg: !!IMG[e.id], imgEl: imgEl(e.id),
+      name: e.name, muscle: e.muscleGroup, level: e.level, levelTag: LEVEL_TAG[e.level],
+      equipment: e.equipment.join(' + '), setsReps: e.sets + ' × ' + e.reps,
+      open: () => this.open(e.id, 'library')
+    }));
+    vals.resultLabel = results.length + ' of ' + EXERCISES.length + ' exercises';
+    vals.noResults = results.length === 0;
+
+    // exercise detail
+    const e = s.exId ? this.ex(s.exId) : null;
+    if (e) {
+      vals.ex = {
+        hasImg: !!IMG[e.id], imgEl: imgEl(e.id),
+        name: e.name, category: e.category, muscleGroup: e.muscleGroup,
+        badgeNum: String(EXERCISES.indexOf(e) + 1).padStart(2, '0'),
+        levelTag: LEVEL_TAG[e.level], levelLabel: e.level, levelNote: LEVEL_NOTE[e.level],
+        sets: e.sets, reps: e.reps, rest: e.rest,
+        equipment: e.equipment, secondaryMuscles: e.secondaryMuscles,
+        instructions: e.instructions.map((t, i) => ({ n: i + 1, text: t })),
+        setup: e.setup, formCues: e.formCues, commonMistakes: e.commonMistakes,
+        safetyNotes: e.safetyNotes,
+        videoNote: 'No demonstration video is linked for this exercise yet. Add a URL to the exercise data and the player appears here.',
+        alternatives: (e.alternatives || []).map(id => ({ name: this.ex(id).name, open: () => this.open(id, s.from) }))
+      };
+    } else {
+      vals.ex = { hasImg: false, imgEl: null, name: '', category: '', muscleGroup: '', badgeNum: '', levelTag: 'tag lv-low', levelLabel: '', levelNote: '', sets: '', reps: '', rest: '', equipment: [], secondaryMuscles: [], instructions: [], setup: '', formCues: [], commonMistakes: [], safetyNotes: '', videoNote: '', alternatives: [] };
+    }
+
+    // workout mode
+    if (m) {
+      const mday = DAYS[m.dayIdx], item = mday.items[m.idx], mex = this.ex(item.id);
+      const done = m.done[item.id] || [];
+      vals.modeCounter = mday.name + ' · exercise ' + (m.idx + 1) + ' of ' + mday.items.length;
+      vals.modeNum = String(m.idx + 1);
+      vals.modeHasImg = !!IMG[item.id]; vals.modeImg = imgEl(item.id);
+      vals.modeName = mex.name; vals.modeLevel = mex.level; vals.modeLevelTag = LEVEL_TAG[mex.level];
+      vals.modeEquip = mex.equipment.join(' + ');
+      vals.modeSets = String(item.sets); vals.modeReps = item.reps; vals.modeRest = item.rest;
+      vals.setRows = Array.from({ length: item.sets }, (_, i) => {
+        const rec = done[i];
+        return {
+          label: 'Set ' + (i + 1) + (rec ? ' ✓' : ''),
+          detail: rec ? ((rec.w ? rec.w + ' ' + u.w + ' × ' : '') + rec.r + ' reps') : 'target ' + item.reps,
+          bg: rec ? 'rgba(59,107,255,.16)' : 'var(--bg2)',
+          fg: rec ? '#93aaff' : 'var(--ink)'
+        };
+      });
+      vals.modeResting = s.resting;
+      vals.restClock = this.clock(s.restLeft);
+      vals.addRest = () => this.setState({ restLeft: s.restLeft + 30 });
+      vals.skipRest = () => this.setState({ resting: false, restLeft: 0 });
+      vals.weightLabel = 'Weight (' + u.w + ')';
+      vals.curWeight = s.curWeight; vals.curReps = s.curReps;
+      vals.setCurWeight = (ev) => this.setState({ curWeight: ev.target.value });
+      vals.setCurReps = (ev) => this.setState({ curReps: ev.target.value });
+      vals.completeSet = () => this.completeSet();
+      vals.setBtnLabel = done.length >= item.sets ? 'All sets complete' : 'Set complete (' + (done.length + 1) + ' of ' + item.sets + ')';
+      vals.nextExercise = () => this.nextExercise();
+      vals.nextBtnLabel = m.idx + 1 >= mday.items.length ? 'Finish workout' : 'Next exercise →';
+      vals.exitMode = () => this.setState({ view: 'day', dayIdx: m.dayIdx });
+      vals.modeQueue = mday.items.map((it, i) => ({
+        label: String(i + 1),
+        cls: i === m.idx ? 'btn pill btn-primary is-on' : 'btn pill btn-secondary',
+        go: () => this.setState({ mode: Object.assign({}, m, { idx: i }), resting: false, restLeft: 0, curWeight: '', curReps: '' })
+      }));
+    } else {
+      vals.modeHasImg = false; vals.modeImg = null;
+      vals.modeCounter = ''; vals.modeNum = ''; vals.modeName = ''; vals.modeLevel = ''; vals.modeLevelTag = 'tag lv-low';
+      
+      vals.modeEquip = ''; vals.modeSets = ''; vals.modeReps = ''; vals.modeRest = ''; vals.setRows = [];
+      vals.modeResting = false; vals.restClock = '0:00'; vals.addRest = () => {}; vals.skipRest = () => {};
+      vals.weightLabel = 'Weight'; vals.curWeight = ''; vals.curReps = '';
+      vals.setCurWeight = () => {}; vals.setCurReps = () => {}; vals.completeSet = () => {};
+      vals.setBtnLabel = 'Set complete'; vals.nextExercise = () => {}; vals.nextBtnLabel = 'Next exercise →';
+      vals.exitMode = () => this.setState({ view: 'home' }); vals.modeQueue = [];
+    }
+
+    return vals;
+  }
+
+  latest(field, unit) {
+    const rows = this.state.measurements.filter(m => m[field]);
+    return rows.length ? rows[rows.length - 1][field] + ' ' + unit : '—';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/styles.css">
+<script src="_ds/modernist-6e0327cf-1c3d-4891-b584-7680b3161027/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #f4f6fb; --dim: #9aa3b8; --faint: #6b7488;
+  --bg0: #0a0c12; --bg1: #10131c; --bg2: #161a26; --line: #232838;
+  --blue: #3b6bff; --blue-soft: rgba(59,107,255,0.16); --gold: #ffd14a;
+}
+body { margin: 0; background: var(--bg0); }
+a { color: var(--ink); text-decoration: none; }
+a:hover { color: var(--blue); }
+::selection { background: var(--blue); color: #fff; }
+button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+.inp { width: 100%; box-sizing: border-box; min-height: 52px; padding: 0 16px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg2); color: var(--ink); font-family: Archivo, system-ui, sans-serif; font-size: 15.5px; font-weight: 600; }
+.inp::placeholder { color: var(--faint); font-weight: 500; }
+.inp:focus { border-color: var(--blue); outline: none; }
+.lbl { font-size: 12.5px; font-weight: 600; color: var(--faint); }
+.cta { cursor: pointer; border: 0; width: 100%; min-height: 54px; border-radius: 14px; background: var(--blue); color: #fff; font-family: Archivo, system-ui, sans-serif; font-size: 15px; font-weight: 700; box-shadow: 0 10px 26px rgba(59,107,255,.32); }
+.cta:hover { background: #2a57e6; }
+.ghost { cursor: pointer; min-height: 52px; border-radius: 14px; background: var(--bg1); border: 1px solid var(--line); color: var(--ink); font-family: Archivo, system-ui, sans-serif; font-size: 14.5px; font-weight: 600; padding: 0 20px; }
+.ghost:hover { border-color: var(--blue); }
+.rail { display: flex; gap: 6px; flex-wrap: wrap; }
+@media (max-width: 640px) { .rail { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; } .rail::-webkit-scrollbar { display: none; } }
+</style>
+</helmet>
+
+<div style="font-family: Archivo, system-ui, sans-serif; background: var(--bg0); color: var(--ink); min-height: 100vh">
+
+  <div style="position: sticky; top: 0; z-index: 50; background: rgba(10,12,18,.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line)">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+      <a href="Home.dc.html" style="display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 16px">
+        <span style="width: 30px; height: 30px; border-radius: 9px; background: var(--blue); display: grid; place-items: center; font-size: 14px; font-weight: 900; color: #fff">G</span>
+        Groundwork
+      </a>
+      <span style="font-size: 12.5px; color: var(--faint); white-space: nowrap">Screen preview</span>
+      <span style="flex: 1"></span>
+      <div class="rail">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="7">
+          <button type="button" onClick="{{ t.pick }}" style="cursor: pointer; border: 1px solid {{ t.border }}; border-radius: 999px; padding: 9px 15px; font-family: Archivo, system-ui, sans-serif; font-size: 13px; font-weight: 700; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ isAuth }}" hint-placeholder-val="{{ true }}">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); min-height: calc(100vh - 63px)">
+      <div style="display: flex; align-items: center; justify-content: center; padding: 40px 20px">
+        <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 18px">
+          <div>
+            <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 8px">{{ auth.title }}</h1>
+            <p style="font-size: 15px; color: var(--dim); margin: 0; line-height: 1.5">{{ auth.sub }}</p>
+          </div>
+
+          <sc-if value="{{ auth.hasOAuth }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; flex-direction: column; gap: 10px">
+              <button type="button" class="ghost" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px">
+                <span style="width: 18px; height: 18px; border-radius: 999px; background: var(--ink); display: inline-block"></span>
+                Continue with Google
+              </button>
+              <button type="button" class="ghost" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px">
+                <span style="width: 18px; height: 18px; border-radius: 999px; background: var(--ink); display: inline-block"></span>
+                Continue with Apple
+              </button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px">
+              <span style="flex: 1; height: 1px; background: var(--line)"></span>
+              <span style="font-size: 12px; color: var(--faint)">or</span>
+              <span style="flex: 1; height: 1px; background: var(--line)"></span>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <sc-for list="{{ auth.fields }}" as="f" hint-placeholder-count="2">
+              <label style="display: flex; flex-direction: column; gap: 8px">
+                <span class="lbl">{{ f.label }}</span>
+                <input class="inp" type="{{ f.type }}" placeholder="{{ f.placeholder }}" autoComplete="{{ f.autoComplete }}">
+                <sc-if value="{{ f.hasHint }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 12.5px; color: var(--faint)">{{ f.hint }}</span>
+                </sc-if>
+              </label>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ auth.isRegister }}" hint-placeholder-val="{{ false }}">
+            <label style="display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--bg1); border: 1px solid var(--line)">
+              <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #3b6bff; flex-shrink: 0">
+              <span style="font-size: 13px; line-height: 1.5; color: var(--dim)">I have read the <a href="#" style="color: var(--blue)">training disclaimer</a>, the <a href="#" style="color: var(--blue)">terms</a> and the <a href="#" style="color: var(--blue)">privacy policy</a>. I understand this is general fitness education, not medical advice.</span>
+            </label>
+          </sc-if>
+
+          <sc-if value="{{ auth.isLogin }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+              <label style="display: flex; gap: 9px; align-items: center; font-size: 13.5px; color: var(--dim)">
+                <input type="checkbox" style="width: 18px; height: 18px; accent-color: #3b6bff">
+                Keep me signed in
+              </label>
+              <button type="button" onClick="{{ goForgot }}" style="cursor: pointer; background: none; border: 0; font-family: Archivo, system-ui, sans-serif; font-size: 13.5px; font-weight: 600; color: var(--blue); white-space: nowrap">Forgot password?</button>
+            </div>
+          </sc-if>
+
+          <button type="button" class="cta">{{ auth.cta }}</button>
+
+          <div style="font-size: 14px; color: var(--dim); text-align: center">
+            {{ auth.altText }}
+            <button type="button" onClick="{{ auth.altGo }}" style="cursor: pointer; background: none; border: 0; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 700; color: var(--blue)">{{ auth.altLink }}</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="position: relative; background: linear-gradient(150deg, #1a2a6e 0%, #21306b 40%, #2a1f6b 100%); display: flex; align-items: center; padding: 48px 40px; overflow: hidden">
+        <div style="position: absolute; inset: 0; background: radial-gradient(80% 60% at 70% 30%, rgba(59,107,255,.35) 0%, rgba(10,12,18,0) 65%)"></div>
+        <div style="position: relative; max-width: 400px; display: flex; flex-direction: column; gap: 22px">
+          <div style="align-self: flex-start; padding: 7px 14px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.18); font-size: 12.5px; font-weight: 700">Free forever</div>
+          <div style="font-size: clamp(26px, 3.4vw, 38px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1">Your plan, your progress, on every device you own.</div>
+          <div style="display: flex; flex-direction: column; gap: 14px">
+            <sc-for list="{{ sellPoints }}" as="p" hint-placeholder-count="4">
+              <div style="display: flex; gap: 12px; align-items: flex-start">
+                <span style="width: 20px; height: 20px; border-radius: 999px; background: var(--gold); color: #16181d; display: grid; place-items: center; font-size: 12px; font-weight: 900; flex-shrink: 0; margin-top: 2px">✓</span>
+                <span style="font-size: 15px; line-height: 1.5; color: rgba(255,255,255,.9)">{{ p }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isAccount }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 34px 20px 60px">
+      <h1 style="font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px">My account</h1>
+      <p style="font-size: 15px; color: var(--dim); margin: 0 0 26px">Signed in as sam@example.com · member since March 2026</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 16px; align-items: start">
+
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+          <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Profile</div>
+          <div style="display: flex; align-items: center; gap: 14px">
+            <span style="width: 56px; height: 56px; border-radius: 999px; background: var(--blue); display: grid; place-items: center; font-size: 22px; font-weight: 800; color: #fff; flex-shrink: 0">S</span>
+            <button type="button" class="ghost" style="min-height: 44px; font-size: 13.5px">Change photo</button>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 8px"><span class="lbl">Display name</span><input class="inp" value="Sam" readOnly></label>
+          <label style="display: flex; flex-direction: column; gap: 8px"><span class="lbl">Email</span><input class="inp" value="sam@example.com" readOnly></label>
+          <label style="display: flex; flex-direction: column; gap: 8px"><span class="lbl">Timezone</span><input class="inp" value="Europe/Paris" readOnly></label>
+          <button type="button" class="cta">Save changes</button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 16px">
+            <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Training preferences</div>
+            <div>
+              <div class="lbl" style="margin-bottom: 9px">Units</div>
+              <div style="display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--bg2); border: 1px solid var(--line)">
+                <span style="padding: 9px 18px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 13.5px; font-weight: 700">kg / cm</span>
+                <span style="padding: 9px 18px; border-radius: 999px; color: var(--dim); font-size: 13.5px; font-weight: 700">lb / in</span>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(130px, 100%), 1fr)); gap: 12px">
+              <label style="display: flex; flex-direction: column; gap: 8px"><span class="lbl">Height (cm)</span><input class="inp" value="178" readOnly></label>
+              <label style="display: flex; flex-direction: column; gap: 8px"><span class="lbl">Weight (kg)</span><input class="inp" value="74" readOnly></label>
+            </div>
+            <div>
+              <div class="lbl" style="margin-bottom: 9px">Sessions per week</div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); font-size: 13.5px; font-weight: 700; color: var(--dim)">2</span>
+                <span style="padding: 9px 16px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 13.5px; font-weight: 700">3</span>
+                <span style="padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); font-size: 13.5px; font-weight: 700; color: var(--dim)">5</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+            <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Notifications</div>
+            <sc-for list="{{ notifRows }}" as="n" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line)">
+                <span style="flex: 1; min-width: 0">
+                  <span style="display: block; font-size: 14.5px; font-weight: 600">{{ n.title }}</span>
+                  <span style="display: block; font-size: 12.5px; color: var(--faint); margin-top: 2px">{{ n.sub }}</span>
+                </span>
+                <span style="width: 46px; height: 26px; border-radius: 999px; background: {{ n.track }}; position: relative; flex-shrink: 0">
+                  <span style="position: absolute; top: 3px; left: {{ n.knob }}; width: 20px; height: 20px; border-radius: 999px; background: #fff"></span>
+                </span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px">
+          <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+            <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Security</div>
+            <button type="button" class="ghost" style="width: 100%; text-align: left">Change password</button>
+            <button type="button" class="ghost" style="width: 100%; text-align: left">Two-factor authentication — off</button>
+            <div style="font-size: 12.5px; color: var(--faint)">Active sessions: 2 devices. <a href="#" style="color: var(--blue)">Sign out everywhere</a></div>
+          </div>
+
+          <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+            <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Your data</div>
+            <button type="button" class="ghost" style="width: 100%; text-align: left">Export everything (JSON)</button>
+            <div style="font-size: 12.5px; color: var(--faint); line-height: 1.55">Plans, logged sets and measurements. Delivered by email as a download link within a few minutes.</div>
+          </div>
+
+          <div style="background: rgba(255,92,92,.06); border: 1px solid rgba(255,92,92,.3); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+            <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em; color: #ff7a7a">Delete account</div>
+            <div style="font-size: 13.5px; color: var(--dim); line-height: 1.55">Permanently removes your plans, training history and measurements. Any active subscription is cancelled. This cannot be undone.</div>
+            <button type="button" style="cursor: pointer; min-height: 48px; border-radius: 14px; background: transparent; border: 1px solid rgba(255,92,92,.5); color: #ff7a7a; font-family: Archivo, system-ui, sans-serif; font-size: 14px; font-weight: 700">Delete my account</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isBilling }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 34px 20px 60px">
+      <h1 style="font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px">Billing</h1>
+      <p style="font-size: 15px; color: var(--dim); margin: 0 0 26px">Everything on Groundwork is free. Supporters cover the hosting.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 16px; align-items: start">
+        <div style="border-radius: 22px; padding: 24px; background: linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%); box-shadow: 0 18px 40px rgba(59,107,255,.28); display: flex; flex-direction: column; gap: 12px">
+          <div style="font-size: 13px; font-weight: 700; opacity: .85">Current plan</div>
+          <div style="font-size: 30px; font-weight: 800; letter-spacing: -0.03em">Supporter</div>
+          <div style="font-size: 15px; opacity: .9">€4.00 / month · renews 12 October 2026</div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px">
+            <button type="button" style="cursor: pointer; min-height: 46px; padding: 0 18px; border-radius: 12px; border: 0; background: #0a0c12; color: #fff; font-family: Archivo, system-ui, sans-serif; font-size: 13.5px; font-weight: 700; white-space: nowrap">Manage in Stripe →</button>
+            <button type="button" style="cursor: pointer; min-height: 46px; padding: 0 18px; border-radius: 12px; background: transparent; border: 1px solid rgba(255,255,255,.5); color: #fff; font-family: Archivo, system-ui, sans-serif; font-size: 13.5px; font-weight: 700; white-space: nowrap">Cancel</button>
+          </div>
+        </div>
+
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px">
+          <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Payment method</div>
+          <div style="display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 14px; background: var(--bg2); border: 1px solid var(--line)">
+            <span style="width: 44px; height: 30px; border-radius: 6px; background: var(--ink); flex-shrink: 0"></span>
+            <span style="flex: 1; min-width: 0">
+              <span style="display: block; font-size: 14.5px; font-weight: 700">Visa ···· 4242</span>
+              <span style="display: block; font-size: 12.5px; color: var(--faint)">Expires 04 / 2029</span>
+            </span>
+          </div>
+          <button type="button" class="ghost" style="width: 100%">Update card in Stripe portal</button>
+          <div style="font-size: 12.5px; color: var(--faint); line-height: 1.55">Card details are held by Stripe and never touch our servers.</div>
+        </div>
+
+        <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px">
+          <div style="font-size: 17px; font-weight: 800; letter-spacing: -0.02em">Invoices</div>
+          <sc-for list="{{ invoices }}" as="i" hint-placeholder-count="4">
+            <div style="display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line)">
+              <span style="flex: 1; min-width: 0; font-size: 14px">{{ i.date }}</span>
+              <span style="font-size: 14px; font-weight: 700; white-space: nowrap">{{ i.amount }}</span>
+              <span style="padding: 4px 10px; border-radius: 999px; background: rgba(72,200,140,.18); color: #5fd9a4; font-size: 11px; font-weight: 800; white-space: nowrap">{{ i.status }}</span>
+              <a href="#" style="font-size: 13px; font-weight: 700; color: var(--blue); white-space: nowrap">PDF</a>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <h2 style="font-size: 22px; font-weight: 800; letter-spacing: -0.025em; margin: 40px 0 16px">Support the project</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px">
+        <sc-for list="{{ tiers }}" as="t" hint-placeholder-count="3">
+          <div style="background: {{ t.bg }}; border: 1px solid {{ t.border }}; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: {{ t.shadow }}">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+              <span style="font-size: 13px; font-weight: 700; color: {{ t.metaFg }}">{{ t.kind }}</span>
+              <sc-if value="{{ t.isCurrent }}" hint-placeholder-val="{{ false }}">
+                <span style="padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,.2); font-size: 11px; font-weight: 800; white-space: nowrap">Current</span>
+              </sc-if>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 6px">
+              <span style="font-size: 34px; font-weight: 800; letter-spacing: -0.03em">{{ t.price }}</span>
+              <span style="font-size: 14px; color: {{ t.metaFg }}">{{ t.period }}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin: 4px 0 0">
+              <sc-for list="{{ t.features }}" as="f" hint-placeholder-count="3">
+                <div style="display: flex; gap: 10px; font-size: 14px; line-height: 1.45; color: {{ t.bodyFg }}">
+                  <span style="color: {{ t.tickFg }}; font-weight: 900">✓</span>
+                  <span>{{ f }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <button type="button" style="cursor: pointer; margin-top: auto; min-height: 50px; border-radius: 14px; border: 0; background: {{ t.btnBg }}; color: {{ t.btnFg }}; font-family: Archivo, system-ui, sans-serif; font-size: 14.5px; font-weight: 700">{{ t.btn }}</button>
+          </div>
+        </sc-for>
+      </div>
+      <p style="font-size: 12.5px; color: var(--faint); margin-top: 14px; max-width: 78ch; line-height: 1.6">Every training feature is free on every tier. Supporter status adds convenience — exports, printable plans, early access — never access to exercises or plans. Donations are not tax-deductible; Groundwork is not a registered charity.</p>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width: 640px; margin: 0 auto; padding: 40px 20px 60px">
+      <button type="button" onClick="{{ goBilling }}" style="cursor: pointer; background: none; border: 0; font-family: Archivo, system-ui, sans-serif; font-size: 13.5px; font-weight: 600; color: var(--dim); padding: 0; margin-bottom: 18px">← Back to billing</button>
+      <h1 style="font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 6px">Confirm your support</h1>
+      <p style="font-size: 15px; color: var(--dim); margin: 0 0 24px">You'll finish payment on Stripe's secure page.</p>
+
+      <div style="background: var(--bg1); border: 1px solid var(--line); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px">
+        <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line)">
+          <span style="flex: 1; min-width: 0">
+            <span style="display: block; font-size: 16px; font-weight: 800">Supporter — monthly</span>
+            <span style="display: block; font-size: 13px; color: var(--faint); margin-top: 2px">Cancel any time, effective at period end</span>
+          </span>
+          <span style="font-size: 20px; font-weight: 800; white-space: nowrap">€4.00</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--dim)"><span>Subtotal</span><span>€4.00</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--dim)"><span>VAT (France, 20%)</span><span>€0.80</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 17px; font-weight: 800; padding-top: 12px; border-top: 1px solid var(--line)"><span>Due today</span><span>€4.80</span></div>
+      </div>
+
+      <label style="display: flex; gap: 12px; align-items: flex-start; padding: 16px; border-radius: 16px; background: var(--bg1); border: 1px solid var(--line); margin-bottom: 16px">
+        <input type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; accent-color: #3b6bff; flex-shrink: 0">
+        <span style="font-size: 13px; line-height: 1.55; color: var(--dim)">I agree that access begins immediately and I waive my 14-day right of withdrawal for the current period.</span>
+      </label>
+
+      <button type="button" class="cta" style="min-height: 58px; font-size: 16px">Continue to Stripe →</button>
+
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; font-size: 12.5px; color: var(--faint)">
+        <span style="width: 14px; height: 14px; border-radius: 4px; background: var(--faint); display: inline-block; flex-shrink: 0"></span>
+        Payment processed by Stripe. We never see your card number.
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1240}}">
+const SCREENS = [
+  { id: 'login', label: 'Sign in' },
+  { id: 'register', label: 'Create account' },
+  { id: 'forgot', label: 'Reset password' },
+  { id: 'account', label: 'My account' },
+  { id: 'billing', label: 'Billing' },
+  { id: 'checkout', label: 'Checkout' }
+];
+
+const AUTH = {
+  login: {
+    title: 'Welcome back', sub: 'Pick up where your last session left off.',
+    hasOAuth: true, isLogin: true, isRegister: false, cta: 'Sign in',
+    altText: 'New here? ', altLink: 'Create an account', alt: 'register',
+    fields: [
+      { label: 'Email', type: 'email', placeholder: 'you@example.com', autoComplete: 'email', hasHint: false, hint: '' },
+      { label: 'Password', type: 'password', placeholder: '••••••••', autoComplete: 'current-password', hasHint: false, hint: '' }
+    ]
+  },
+  register: {
+    title: 'Create your account', sub: 'Free, no card, no ads. Takes about thirty seconds.',
+    hasOAuth: true, isLogin: false, isRegister: true, cta: 'Create account',
+    altText: 'Already have an account? ', altLink: 'Sign in', alt: 'login',
+    fields: [
+      { label: 'Display name', type: 'text', placeholder: 'Sam', autoComplete: 'name', hasHint: false, hint: '' },
+      { label: 'Email', type: 'email', placeholder: 'you@example.com', autoComplete: 'email', hasHint: false, hint: '' },
+      { label: 'Password', type: 'password', placeholder: 'At least 10 characters', autoComplete: 'new-password', hasHint: true, hint: 'Ten characters minimum. A passphrase beats a complicated short password.' }
+    ]
+  },
+  forgot: {
+    title: 'Reset your password', sub: 'Enter your email and we will send a link. It expires in one hour.',
+    hasOAuth: false, isLogin: false, isRegister: false, cta: 'Send reset link',
+    altText: 'Remembered it? ', altLink: 'Back to sign in', alt: 'login',
+    fields: [
+      { label: 'Email', type: 'email', placeholder: 'you@example.com', autoComplete: 'email', hasHint: false, hint: '' }
+    ]
+  }
+};
+
+const SELL = [
+  'Forty-three exercises with cues, mistakes and no-equipment alternatives.',
+  'A week built around the days you can actually train.',
+  'Rest timer and set logging that work without signal.',
+  'Progress charts you own — export or delete them any time.'
+];
+
+const NOTIFS = [
+  { title: 'Workout reminders', sub: 'On your training days, at a time you choose', on: true },
+  { title: 'Weekly progress digest', sub: 'Sunday evening summary of the week', on: true },
+  { title: 'New exercises and plans', sub: 'When the library gains something relevant', on: false },
+  { title: 'Product and account email', sub: 'Security notices are always sent', on: true }
+];
+
+const INVOICES = [
+  { date: '12 September 2026', amount: '€4.80', status: 'Paid' },
+  { date: '12 August 2026', amount: '€4.80', status: 'Paid' },
+  { date: '12 July 2026', amount: '€4.80', status: 'Paid' },
+  { date: '12 June 2026', amount: '€4.80', status: 'Paid' }
+];
+
+class Component extends DCLogic {
+  state = { screen: 'login' };
+
+  renderVals() {
+    const s = this.state.screen;
+    const authKey = AUTH[s] ? s : null;
+    const a = authKey ? AUTH[authKey] : AUTH.login;
+
+    return {
+      tabs: SCREENS.map(x => ({
+        label: x.label,
+        bg: x.id === s ? '#3b6bff' : 'transparent',
+        fg: x.id === s ? '#fff' : 'var(--dim)',
+        border: x.id === s ? '#3b6bff' : 'var(--line)',
+        pick: () => this.setState({ screen: x.id })
+      })),
+
+      isAuth: !!authKey,
+      isAccount: s === 'account',
+      isBilling: s === 'billing',
+      isCheckout: s === 'checkout',
+
+      auth: Object.assign({}, a, { altGo: () => this.setState({ screen: a.alt }) }),
+      goForgot: () => this.setState({ screen: 'forgot' }),
+      goBilling: () => this.setState({ screen: 'billing' }),
+      sellPoints: SELL,
+
+      notifRows: NOTIFS.map(n => ({
+        title: n.title, sub: n.sub,
+        track: n.on ? '#3b6bff' : '#232838',
+        knob: n.on ? '23px' : '3px'
+      })),
+
+      invoices: INVOICES,
+
+      tiers: [
+        {
+          kind: 'Free', price: '€0', period: 'forever', isCurrent: false,
+          bg: 'var(--bg1)', border: 'var(--line)', shadow: 'none',
+          metaFg: 'var(--faint)', bodyFg: 'var(--dim)', tickFg: '#5fd9a4',
+          btnBg: 'var(--bg2)', btnFg: 'var(--ink)', btn: 'Your current plan',
+          features: ['The full exercise library', 'All weekly plans and customization', 'Workout mode, rest timer, set logging', 'Progress charts and measurements']
+        },
+        {
+          kind: 'Supporter', price: '€4', period: '/ month', isCurrent: true,
+          bg: 'linear-gradient(150deg, #2a57e6 0%, #3b6bff 45%, #5b3bff 100%)', border: '#3b6bff',
+          shadow: '0 18px 40px rgba(59,107,255,.28)',
+          metaFg: 'rgba(255,255,255,.85)', bodyFg: 'rgba(255,255,255,.92)', tickFg: '#ffd14a',
+          btnBg: '#0a0c12', btnFg: '#fff', btn: 'Manage subscription',
+          features: ['Everything in Free', 'Printable plan and session PDFs', 'One-click data export', 'Early access to new programs', 'Supporter badge on your profile']
+        },
+        {
+          kind: 'One-off donation', price: '€10', period: 'once', isCurrent: false,
+          bg: 'var(--bg1)', border: 'var(--line)', shadow: 'none',
+          metaFg: 'var(--faint)', bodyFg: 'var(--dim)', tickFg: '#ffd14a',
+          btnBg: '#3b6bff', btnFg: '#fff', btn: 'Donate',
+          features: ['No account needed', 'Choose any amount', 'Receipt by email', 'Funds hosting and photography']
+        }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
