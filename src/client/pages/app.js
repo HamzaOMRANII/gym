@@ -150,10 +150,10 @@ function homeView() {
     </div>`}
     ${mode && mode.dayIdx !== todayIdx ? `<div class="boxed" style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center"><span style="flex:1">A ${esc(week[mode.dayIdx].name)} workout is still open.</span><button type="button" class="btn btn-secondary" data-action="resume">Resume it</button></div>` : ""}
     <div style="margin-top:34px;border-top:1px solid var(--line);padding-top:18px">
-      <div class="row" style="justify-content:space-between;margin-bottom:14px"><h2 style="font-size:13px">Weekly schedule · ${esc(plan.name)}</h2><a href="/plans" style="font-size:13px;color:var(--blue)">Change plan</a></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:14px"><h2 style="font-size:13px">Weekly schedule · ${esc(plan.name)}</h2><a href="/plans" style="font-size:13px;color:var(--accent)">Change plan</a></div>
       <div class="grid" style="--min:240px;--gap:12px">${week.map((day, index) => `<button type="button" class="week-day${index === todayIdx ? " is-today" : ""}${day.items.length ? " is-work" : ""}" data-action="openDay" data-day="${index}">
         <span style="font-weight:800;letter-spacing:-0.02em;font-size:17px">${esc(day.name)}</span>
-        <span style="font-size:14px;font-weight:600;color:var(--blue)">${esc(day.focus)}</span>
+        <span style="font-size:14px;font-weight:600;color:var(--accent)">${esc(day.focus)}</span>
         <span class="micro">${day.items.length ? `${day.items.length} exercises · ${duration(day)}` : "Recovery"}</span>
       </button>`).join("")}</div>
     </div>
@@ -189,7 +189,7 @@ function dayView() {
     }).join("")}</div>
     ${day.items.length ? `<div style="margin-top:20px">
       <button type="button" class="btn btn-primary btn-block" data-action="start" data-day="${state.dayIdx}" style="min-height:62px;font-size:18px">${state.mode?.dayIdx === state.dayIdx ? "Resume workout" : "Start workout"}</button>
-      ${ownPlan ? "" : `<p class="hint" style="margin-top:10px">${user ? `Want to swap exercises? <a href="/plans" style="color:var(--blue)">Choose this week in Plans</a> to make it your own.` : `<a href="/account" style="color:var(--blue)">Sign in</a> and choose a plan to swap exercises and keep your log on every device.`}</p>`}
+      ${ownPlan ? "" : `<p class="hint" style="margin-top:10px">${user ? `Want to swap exercises? <a href="/plans" style="color:var(--accent)">Choose this week in Plans</a> to make it your own.` : `<a href="/account" style="color:var(--accent)">Sign in</a> and choose a plan to swap exercises and keep your log on every device.`}</p>`}
     </div>` : ""}
   </div>`;
 }
@@ -233,9 +233,9 @@ function exerciseView() {
         ${exercise.mistakes.length ? `<h2 class="rule-head" style="margin-top:24px">Common mistakes</h2>${list(exercise.mistakes, "muted-bar")}` : ""}
         ${alternatives.length ? `<h2 class="rule-head" style="margin-top:24px">Alternatives</h2><div class="row" style="--gap:8px">${alternatives.map((alt) => `<button type="button" class="chip" data-action="open" data-slug="${esc(alt.slug)}" data-from="${esc(state.from)}">${esc(alt.name)}</button>`).join("")}</div>` : ""}
         <div class="boxed" style="margin-top:24px"><span class="metric-label" style="margin-bottom:6px">Video</span><div style="font-size:14px;color:var(--dim)">${exercise.videoUrl
-          ? `<a href="${esc(exercise.videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">Watch the demonstration ↗</a>`
+          ? `<a href="${esc(exercise.videoUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">Watch the demonstration ↗</a>`
           : "No demonstration video is linked for this exercise yet."}</div></div>
-        <div class="boxed boxed-blue" style="margin-top:12px"><span class="metric-label" style="margin-bottom:6px;color:var(--blue)">Safety</span><div style="font-size:14px">${esc(exercise.safetyNotes || "No exercise is risk-free. Stop if you feel sharp or unusual pain, and reduce the load before reducing control.")}</div></div>
+        <div class="boxed boxed-blue" style="margin-top:12px"><span class="metric-label" style="margin-bottom:6px;color:var(--accent)">Safety</span><div style="font-size:14px">${esc(exercise.safetyNotes || "No exercise is risk-free. Stop if you feel sharp or unusual pain, and reduce the load before reducing control.")}</div></div>
       </div>
     </div>
   </div>`;
@@ -311,7 +311,7 @@ function progressView() {
   const queued = state.history.filter((entry) => entry.pending).length;
   return `<div style="padding-top:24px">
     <h1 style="font-size:clamp(30px,6vw,52px);margin-bottom:6px">Progress</h1>
-    <p class="sync-note" style="margin-bottom:16px">${user ? `Synced to your account (${esc(user.email)}).${queued ? ` ${queued} workout${queued === 1 ? "" : "s"} waiting for a connection.` : ""}` : `Stored on this device only. <a href="/account" style="color:var(--blue)">Create a free account</a> to keep it on every device.`}</p>
+    <p class="sync-note" style="margin-bottom:16px">${user ? `Synced to your account (${esc(user.email)}).${queued ? ` ${queued} workout${queued === 1 ? "" : "s"} waiting for a connection.` : ""}` : `Stored on this device only. <a href="/account" style="color:var(--accent)">Create a free account</a> to keep it on every device.`}</p>
     <div class="grid" style="--min:150px;--gap:12px;margin-bottom:26px">${[
       ["Sessions logged", state.history.length], ["Sets logged", setCount], ["Body weight", latest("weight", unit.w)], ["Arm", latest("arm", unit.l)],
     ].map(([label, value]) => `<div class="stat" style="padding:16px 18px"><div class="stat-label" style="margin:0 0 8px;font-size:12.5px">${label}</div><div class="stat-value" style="font-size:26px">${esc(value)}</div></div>`).join("")}</div>
@@ -326,7 +326,7 @@ function progressView() {
       <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font-size:12.5px">${item.label}</div><div style="font-weight:800;font-size:20px">${esc(item.latest)}</div></div>
       <svg class="chart" viewBox="0 0 320 120" preserveAspectRatio="none" role="img" aria-label="${item.label} over time">
         <line x1="0" y1="119" x2="320" y2="119" stroke="#232838" stroke-width="2" vector-effect="non-scaling-stroke"></line>
-        ${item.points ? `<polyline points="${item.points}" fill="none" stroke="#3b6bff" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>` : ""}
+        ${item.points ? `<polyline points="${item.points}" fill="none" stroke="#EA580C" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>` : ""}
         ${item.dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="3" fill="#f4f6fb"></circle>`).join("")}
       </svg>
       <div class="row micro" style="justify-content:space-between;margin-top:6px"><span>${esc(item.first)}</span><span>${esc(item.range)}</span></div>
@@ -430,7 +430,7 @@ function render() {
       <span class="faint nowrap">${esc(plan.name)}</span>
       <span class="spacer"></span>
       <span class="faint nowrap">Units: ${units().w} / ${units().l}</span>
-      <a href="/account" style="font-weight:700;color:var(--blue)">${user ? "My account" : "Sign in"}</a>
+      <a href="/account" style="font-weight:700;color:var(--accent)">${user ? "My account" : "Sign in"}</a>
     </div>
     <nav class="app-nav rail" id="appNav" aria-label="Training app"></nav>
     <main id="view"></main>

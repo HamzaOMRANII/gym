@@ -76,7 +76,7 @@ export async function mountAppDownload() {
       <a class="btn btn-primary" href="/download/${esc(release.file)}" download style="padding:12px 18px;border-radius:12px;font-size:14px">Download the app</a>
     </div>
     <details class="hint" style="font-size:13.5px;color:var(--dim)">
-      <summary style="cursor:pointer;color:var(--blue-text)">How to install without the Play Store</summary>
+      <summary style="cursor:pointer;color:var(--accent-text)">How to install without the Play Store</summary>
       <ol style="margin:10px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:6px;line-height:1.5">
         <li>Open this page on your Android phone and tap <strong>Download the app</strong>.</li>
         <li>Open the downloaded file. If Android asks, allow <strong>Install unknown apps</strong> for your browser (Settings → Apps → your browser → Install unknown apps).</li>

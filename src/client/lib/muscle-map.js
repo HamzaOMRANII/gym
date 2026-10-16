@@ -90,10 +90,10 @@ class MuscleMap extends HTMLElement {
     svg.querySelectorAll("ellipse, path").forEach((part) => {
       const group = part.getAttribute("data-g");
       if (group && hot.has(group)) {
-        part.setAttribute("fill", "#3b6bff");
+        part.setAttribute("fill", "#EA580C");
         part.setAttribute("filter", `url(#${uid})`);
       } else if (group && warm.has(group)) {
-        part.setAttribute("fill", "#3b6bff");
+        part.setAttribute("fill", "#EA580C");
         part.setAttribute("opacity", "0.32");
       } else {
         part.setAttribute("fill", "#2a3042");

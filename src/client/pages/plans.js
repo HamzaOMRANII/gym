@@ -45,7 +45,7 @@ function weekCards(plan) {
 
 function actionNote() {
   if (user) return adoptedSlug ? "Your account follows a plan. Choosing another replaces it; your logged sessions stay." : "Saved to your account, so the training app opens on it on every device.";
-  return `Saved on this device. <a href="/account" style="color:var(--blue)">Sign in</a> to keep it on every device.`;
+  return `Saved on this device. <a href="/account" style="color:var(--accent)">Sign in</a> to keep it on every device.`;
 }
 
 function planHtml() {

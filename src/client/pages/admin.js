@@ -67,7 +67,7 @@ function dashboardHtml() {
         <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:16px"><span class="card-title" style="font-size:16px">Signups, last 14 days</span><span class="hint nowrap">${total} total</span></div>
         <svg class="bars" viewBox="0 0 340 120" preserveAspectRatio="none" role="img" aria-label="Signups per day">${signups.map((day, index) => {
           const height = Math.max(2, Math.round((day.count / max) * 108));
-          return `<rect x="${index * 24 + 2}" y="${116 - height}" width="18" height="${height}" rx="3" fill="${index === signups.length - 1 ? "#3b6bff" : "rgba(59,107,255,.35)"}"><title>${day.date}: ${day.count}</title></rect>`;
+          return `<rect x="${index * 24 + 2}" y="${116 - height}" width="18" height="${height}" rx="3" fill="${index === signups.length - 1 ? "#EA580C" : "rgba(234,88,12,.35)"}"><title>${day.date}: ${day.count}</title></rect>`;
         }).join("")}</svg>
       </div>
       <div class="card" style="padding:20px">
