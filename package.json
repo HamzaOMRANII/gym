@@ -1,6 +1,6 @@
 {
   "name": "omrani-gym",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "description": "Groundwork: beginner strength training, weekly plans and progress tracking",
   "main": "src/server.js",

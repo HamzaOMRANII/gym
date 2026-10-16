@@ -6,7 +6,9 @@ export const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
 
 export const DISCLAIMER = "This training program is designed for general fitness education. Start with manageable weights, prioritize controlled technique, and stop if you experience sharp or unusual pain. Consult a qualified professional if you have an injury, medical condition, or are unsure whether an exercise is appropriate for you.";
 
-export const brand = (href = "/") => `<a class="brand" href="${href}"><span class="brand-mark" aria-hidden="true">G</span>Groundwork</a>`;
+// Groundwork mark: the Gym logo from the omranisystems.com homepage (white ring, orange S, dumbbell badge).
+const MARK = `<svg viewBox="-4 -4 128 128" width="100%" height="100%"><circle cx="60" cy="60" r="46" fill="none" stroke="#FFFFFF" stroke-width="9"/><path d="M116 32H52Q40 32 40 44V48Q40 60 52 60H68Q80 60 80 72V76Q80 88 68 88H4" fill="none" stroke="#0B0D12" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><path d="M102 32H52Q40 32 40 44V48Q40 60 52 60H68Q80 60 80 72V76Q80 88 68 88H18" fill="none" stroke="#EA580C" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/><circle cx="96" cy="96" r="19" fill="#EA580C"/><g fill="#FFFFFF"><rect x="90" y="94" width="12" height="4" rx="2"/><rect x="87" y="90" width="4" height="12" rx="1.6"/><rect x="101" y="90" width="4" height="12" rx="1.6"/><rect x="84" y="92" width="3" height="8" rx="1.4"/><rect x="105" y="92" width="3" height="8" rx="1.4"/></g></svg>`;
+export const brand = (href = "/") => `<a class="brand" href="${href}"><span class="brand-mark" aria-hidden="true">${MARK}</span>Groundwork</a>`;
 
 // Sticky site header. `links` are [label, href]; the account link reflects the signed-in user.
 export function header({ links = [], cta = ["Training app", "/app"], user = null, current = "" } = {}) {
@@ -66,7 +68,7 @@ export async function mountAppDownload() {
   const size = `${Math.round(release.size / (1024 * 1024))} MB`;
   slot.innerHTML = `<div class="card card-pad" style="display:flex;flex-direction:column;gap:12px">
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-      <img src="/brand/icon.svg" width="44" height="44" alt="" style="border-radius:12px">
+      <img src="/brand/icon.svg?v=2" width="44" height="44" alt="" style="border-radius:12px">
       <div style="flex:1 1 180px;min-width:0">
         <div class="card-title">Groundwork for Android</div>
         <div class="hint">gym.apk · v${esc(release.version)} · ${size}</div>

@@ -1,38 +1,39 @@
 #!/usr/bin/env bash
-# Regenerates the Android launcher icons and splash screens from the Groundwork brand mark
-# (blue rounded square with a white "G", as in public/brand/icon.svg). Needs rsvg-convert.
+# Regenerates the Android launcher icons and splash screens from resources/logo-mark.svg
+# (the Gym logo from the omranisystems.com homepage).
+# Needs rsvg-convert (librsvg2-bin). Run after changing the logo, then commit the PNGs.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 RES=android/app/src/main/res
-BLUE="#3b6bff"; DARK="#0a0c12"
-FONT="Archivo, Nimbus Sans, Arial, sans-serif"
+BG="#0B0D12"
+MARK=$(sed -e 's/^<svg[^>]*>//' -e 's/<\/svg>$//' resources/logo-mark.svg)
 
-# G letter centred in a WxH canvas, letter height ~ S px
-# (baseline = centre + half the cap height, ~0.36 em, so the letter is optically centred)
-glyph() { local w=$1 h=$2 s=$3; printf '<text x="%s" y="%s" text-anchor="middle" font-family="%s" font-size="%s" font-weight="900" fill="#fff">G</text>' \
-  "$(( w / 2 ))" "$(( h / 2 + s * 36 / 100 ))" "$FONT" "$s"; }
+# canvas W H, mark size S (px), corner radius R -> PNG on stdout
+render() {
+  local w=$1 h=$2 s=$3 r=$4 bg=$5
+  local x=$(( (w - s) / 2 )) y=$(( (h - s) / 2 ))
+  local fill=""; [ "$bg" != "none" ] && fill="<rect width=\"$w\" height=\"$h\" rx=\"$r\" fill=\"$bg\"/>"
+  printf '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">%s<svg x="%s" y="%s" width="%s" height="%s" viewBox="-4 -4 128 128">%s</svg></svg>' \
+    "$w" "$h" "$fill" "$x" "$y" "$s" "$s" "$MARK" | rsvg-convert -f png
+}
 
 for d in mdpi:1 hdpi:1.5 xhdpi:2 xxhdpi:3 xxxhdpi:4; do
   name=${d%%:*}; k=${d##*:}
   px() { python3 -c "print(round($1*$k))"; }
   L=$(px 48); F=$(px 108)
-  printf '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s"><rect width="%s" height="%s" rx="%s" fill="%s"/>%s</svg>' \
-    "$L" "$L" "$L" "$L" "$(px 13)" "$BLUE" "$(glyph "$L" "$L" "$(px 26)")" | rsvg-convert -f png > "$RES/mipmap-$name/ic_launcher.png"
-  printf '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s"><circle cx="%s" cy="%s" r="%s" fill="%s"/>%s</svg>' \
-    "$L" "$L" "$(( L / 2 ))" "$(( L / 2 ))" "$(( L / 2 ))" "$BLUE" "$(glyph "$L" "$L" "$(px 26)")" | rsvg-convert -f png > "$RES/mipmap-$name/ic_launcher_round.png"
-  # Adaptive foreground: 108dp canvas, letter inside the 66dp safe zone (background colour below)
-  printf '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s">%s</svg>' \
-    "$F" "$F" "$(glyph "$F" "$F" "$(px 56)")" | rsvg-convert -f png > "$RES/mipmap-$name/ic_launcher_foreground.png"
+  render "$L" "$L" "$(px 42)" "$(px 10)" "$BG" > "$RES/mipmap-$name/ic_launcher.png"
+  render "$L" "$L" "$(px 42)" "$(px 24)" "$BG" > "$RES/mipmap-$name/ic_launcher_round.png"
+  # Adaptive foreground: 108dp canvas, mark centred on its ring and inside the 66dp safe zone
+  render "$F" "$F" "$(px 68)" 0 none > "$RES/mipmap-$name/ic_launcher_foreground.png"
 done
 
-# Splash screens: dark background, centred brand mark
+# Splash screens: keep each file's size, dark background, mark centred on its ring
 for f in "$RES"/drawable*/splash.png; do
   read -r w h < <(python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(24);print(*struct.unpack('>II',d[16:24]))" "$f")
-  s=$(( (w < h ? w : h) * 26 / 100 )); x=$(( (w - s) / 2 )); y=$(( (h - s) / 2 ))
-  printf '<svg xmlns="http://www.w3.org/2000/svg" width="%s" height="%s"><rect width="%s" height="%s" fill="%s"/><svg x="%s" y="%s" width="%s" height="%s" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="%s"/><text x="32" y="44" text-anchor="middle" font-family="%s" font-size="32" font-weight="900" fill="#fff">G</text></svg></svg>' \
-    "$w" "$h" "$w" "$h" "$DARK" "$x" "$y" "$s" "$s" "$BLUE" "$FONT" | rsvg-convert -f png > "$f.tmp" && mv "$f.tmp" "$f"
+  s=$(( (w < h ? w : h) * 28 / 100 ))
+  render "$w" "$h" "$s" 0 "$BG" > "$f.tmp" && mv "$f.tmp" "$f"
 done
 
-printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">%s</color>\n</resources>\n' "$BLUE" \
+printf '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">%s</color>\n</resources>\n' "$BG" \
   > "$RES/values/ic_launcher_background.xml"
 echo "Android icons and splash screens regenerated."
