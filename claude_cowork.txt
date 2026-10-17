@@ -1,0 +1,52 @@
+Claude Code session: Groundwork (gym.omranisystems.com) colours + exercise images
+==================================================================================
+
+Session ID : 0ebc7bea-ca6e-4230-9f58-b2d19f7be166
+Saved      : 2026-10-17
+Transcript : /root/.claude/projects/-projects-gym/0ebc7bea-ca6e-4230-9f58-b2d19f7be166.jsonl
+
+HOW TO RELAUNCH THIS CHAT
+-------------------------
+  cd /projects/gym
+  claude --resume 0ebc7bea-ca6e-4230-9f58-b2d19f7be166
+
+(Or run `claude --resume` in /projects/gym and pick this session from the list.)
+Then say e.g.: "Billing is enabled, generate the Gemini images."
+
+WHAT IS DONE (approved for web and mobile)
+------------------------------------------
+- Colours re-toned from the logo (black #0B0D12, white, orange #EA580C): warm charcoal surfaces,
+  amber highlight; layout unchanged. Commit af95202, pushed to main.
+- Backup of the previous design: branch `design-backup-2026-10-17`, tag `design-v1-orange-accent`
+  (restore command in README.md, section "Colours and the design backup").
+- Stale logo on the web fixed: HTML pages are served with Cache-Control: no-cache.
+- 21 exercise images + Legs/Core category images added (Everkinetic drawings / free-exercise-db photos,
+  credits in public/uploads/CREDITS.md and the site footer). Live DB updated with `npm run seed`.
+- Android APK 2.0.4 published to /projects/mobile_builds/gym (same colours and images as the web).
+
+WHAT IS PENDING
+---------------
+Replace those images with Gemini renders using the user's prompt (grayscale 3D anatomy, glowing red
+target muscles, white labels, white background), for 26 exercises:
+  - the 21 added above, and
+  - the 5 still without an image: Wall Press (floor-fly-towel), Pike Push-Up, Wall Slide,
+    Towel Isometric Curl, Bird Dog.
+
+Blocker: the GEMINI_API_KEY in /projects/gym/.env is on the free tier, which has 0 image quota
+("limit: 0" on every image model). Fix: Google AI Studio -> API keys -> the key's project ->
+Set up billing. Expected cost about $1-4 for all 26 images.
+
+Ready to use:
+  - scripts/gemini-images.mjs   generator (fills the prompt per exercise, saves public/uploads/<slug>.jpg 1408x768)
+  - docs/GEMINI-PROMPTS.md      all 26 prompts (to paste into the Gemini app by hand if preferred)
+  - npm run images:gemini       (load the key with: node --env-file=.env scripts/gemini-images.mjs)
+      test one first:  node --env-file=.env scripts/gemini-images.mjs --only bodyweight-squat
+      models: default gemini-2.5-flash-image; override with GEMINI_IMAGE_MODEL (e.g. gemini-3-pro-image)
+
+Next steps once billing is on (or once hand-made images are dropped into design/uploads/):
+  1. Generate the squat test image, get it approved.
+  2. Generate the other 25, review each, regenerate wrong poses/labels.
+  3. Update imageAlt in src/seed/catalog.js + live DB, set images for the 5 missing, update CREDITS.md
+     and the footer credit line (src/client/lib/site.js).
+  4. npm run build, pm2 reload gym; bump version in package.json and `npm run build:apk -- --notes "..."`.
+  5. Commit and push to main.

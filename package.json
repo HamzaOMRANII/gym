@@ -12,7 +12,8 @@
     "seed": "node scripts/seed.js",
     "bootstrap": "node scripts/bootstrap.js",
     "check": "node --check src/server.js && node --check src/app.js && vite build --configLoader runner",
-    "build:apk": "node scripts/build-apk.mjs"
+    "build:apk": "node scripts/build-apk.mjs",
+    "images:gemini": "node scripts/gemini-images.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@capacitor/cli": "^8.5.3",
     "concurrently": "^9.2.1",
+    "sharp": "^0.34.3",
     "vite": "^7.1.12"
   }
 }
