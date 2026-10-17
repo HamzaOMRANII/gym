@@ -80,6 +80,24 @@ Payments (Stripe subscription and donations: the donate buttons record intent on
 sign-in, password-reset email, notification emails (preferences are stored), blog, contact form,
 media uploads from the admin.
 
+## Colours and the design backup
+
+Colours come from the logo (black `#0B0D12`, white, orange `#EA580C`): warm charcoal surfaces and the orange
+accent, all as tokens at the top of `src/client/styles.css`. The previous palette (blue-grey surfaces with the
+orange accent) is kept on the branch `design-backup-2026-10-17` and the tag `design-v1-orange-accent`.
+To bring it back:
+
+```bash
+git checkout design-v1-orange-accent -- src/client/styles.css src/client/lib/muscle-map.js src/client/pages/app.js src/client/pages/admin.js '*.html' capacitor.config.json
+git commit -m "Restore the previous Groundwork colours"   # then deploy, and bump the version + build:apk for the app
+```
+
+## Exercise images
+
+Images live in `public/uploads/`; sources and licences are in `public/uploads/CREDITS.md` (the Everkinetic
+drawings are CC BY-SA 4.0, credited in the site footer). `npm run seed` also fills the image of any record that has
+none, without replacing images chosen in `/admin`.
+
 ## Android app
 
 The same pages are packaged as a sideloaded Android app (Capacitor, `com.omranisystems.gym`), never published to a store.

@@ -96,7 +96,7 @@ class MuscleMap extends HTMLElement {
         part.setAttribute("fill", "#EA580C");
         part.setAttribute("opacity", "0.32");
       } else {
-        part.setAttribute("fill", "#2a3042");
+        part.setAttribute("fill", "#3a3430");
       }
       part.setAttribute("stroke", "rgba(255,255,255,0.08)");
       part.setAttribute("stroke-width", "1");

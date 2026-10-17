@@ -181,7 +181,7 @@ function editorHtml() {
       </div>
       <div class="card stack" style="padding:20px">
         <div class="card-title" style="font-size:16px">Media</div>
-        ${exercise.image ? `<div style="position:relative;height:160px;border-radius:14px;background:#eef0f4;overflow:hidden"><img src="${esc(exercise.image)}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px"></div>` : `<div class="hint" style="height:120px;border-radius:14px;border:1px dashed var(--line);background:var(--bg2);display:grid;place-items:center;text-align:center;padding:16px">No image: the muscle map is shown instead.</div>`}
+        ${exercise.image ? `<div style="position:relative;height:160px;border-radius:14px;background:#f5f5f4;overflow:hidden"><img src="${esc(exercise.image)}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:8px"></div>` : `<div class="hint" style="height:120px;border-radius:14px;border:1px dashed var(--line);background:var(--bg2);display:grid;place-items:center;text-align:center;padding:16px">No image: the muscle map is shown instead.</div>`}
         ${field("image", "Image path", exercise.image, 'placeholder="/uploads/exercise-name.jpg"')}
         <span class="hint" style="margin-top:-6px">Put the file in <code>public/uploads/</code> and redeploy. JPG or WebP, at least 1200px wide.</span>
         ${field("imageAlt", "Alt text (required with an image)", exercise.imageAlt, 'placeholder="Describe the movement for screen readers"')}

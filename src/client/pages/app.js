@@ -325,9 +325,9 @@ function progressView() {
     <div class="grid" style="--min:280px;--gap:20px">${[chart("weight", "Body weight", unit.w), chart("chest", "Chest", unit.l), chart("arm", "Arm", unit.l)].map((item) => `<div class="boxed">
       <div class="row" style="justify-content:space-between;align-items:baseline;margin-bottom:10px"><div style="font-size:12.5px">${item.label}</div><div style="font-weight:800;font-size:20px">${esc(item.latest)}</div></div>
       <svg class="chart" viewBox="0 0 320 120" preserveAspectRatio="none" role="img" aria-label="${item.label} over time">
-        <line x1="0" y1="119" x2="320" y2="119" stroke="#232838" stroke-width="2" vector-effect="non-scaling-stroke"></line>
+        <line x1="0" y1="119" x2="320" y2="119" stroke="#292524" stroke-width="2" vector-effect="non-scaling-stroke"></line>
         ${item.points ? `<polyline points="${item.points}" fill="none" stroke="#EA580C" stroke-width="2" vector-effect="non-scaling-stroke"></polyline>` : ""}
-        ${item.dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="3" fill="#f4f6fb"></circle>`).join("")}
+        ${item.dots.map((dot) => `<circle cx="${dot.x}" cy="${dot.y}" r="3" fill="#fafaf9"></circle>`).join("")}
       </svg>
       <div class="row micro" style="justify-content:space-between;margin-top:6px"><span>${esc(item.first)}</span><span>${esc(item.range)}</span></div>
     </div>`).join("")}</div>

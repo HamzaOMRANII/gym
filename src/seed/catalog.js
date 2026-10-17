@@ -35,14 +35,14 @@ module.exports = {
       "name": "Legs",
       "blurb": "Stable machines and controlled movement. No barbell squats or deadlifts required.",
       "position": 4,
-      "image": ""
+      "image": "/uploads/leg-press.jpg"
     },
     {
       "slug": "core",
       "name": "Core",
       "blurb": "Bracing and trunk control. Needs no equipment and can be done at home on a mat.",
       "position": 5,
-      "image": ""
+      "image": "/uploads/plank.jpg"
     }
   ],
   "exercises": [
@@ -347,8 +347,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/incline-push-up.jpg",
+      "imageAlt": "Hands-Elevated Push-Up: photo of the working position",
       "position": 6
     },
     {
@@ -605,8 +605,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/table-row.jpg",
+      "imageAlt": "Table Row: line drawing of the start and end positions",
       "position": 12
     },
     {
@@ -639,8 +639,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/towel-row.jpg",
+      "imageAlt": "Door-Anchored Towel Row: photo of the working position",
       "position": 13
     },
     {
@@ -673,8 +673,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/prone-y.jpg",
+      "imageAlt": "Floor Y-Raise: line drawing of the start and end positions",
       "position": 14
     },
     {
@@ -798,8 +798,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/machine-shoulder-press.jpg",
+      "imageAlt": "Machine Shoulder Press: photo of the working position",
       "position": 17
     },
     {
@@ -1081,8 +1081,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/chair-dip.jpg",
+      "imageAlt": "Chair Dip: line drawing of the start and end positions",
       "position": 24
     },
     {
@@ -1149,8 +1149,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/diamond-push-up.jpg",
+      "imageAlt": "Diamond Push-Up: line drawing of the start and end positions",
       "position": 26
     },
     {
@@ -1195,8 +1195,8 @@ module.exports = {
       "alternatives": [
         "leg-extension"
       ],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/leg-press.jpg",
+      "imageAlt": "Leg Press Machine: line drawing of the start and end positions",
       "position": 27
     },
     {
@@ -1240,8 +1240,8 @@ module.exports = {
       "alternatives": [
         "leg-press"
       ],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/leg-extension.jpg",
+      "imageAlt": "Leg Extension Machine: line drawing of the start and end positions",
       "position": 28
     },
     {
@@ -1286,8 +1286,8 @@ module.exports = {
       "alternatives": [
         "leg-press"
       ],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/leg-curl.jpg",
+      "imageAlt": "Seated / Lying Leg Curl: line drawing of the start and end positions",
       "position": 29
     },
     {
@@ -1331,8 +1331,8 @@ module.exports = {
       "alternatives": [
         "leg-press"
       ],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/hip-abductor.jpg",
+      "imageAlt": "Hip Abductor Machine: line drawing of the start and end positions",
       "position": 30
     },
     {
@@ -1376,8 +1376,8 @@ module.exports = {
       "alternatives": [
         "leg-press"
       ],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/calf-raise.jpg",
+      "imageAlt": "Calf Raise Machine: line drawing of the start and end positions",
       "position": 31
     },
     {
@@ -1410,8 +1410,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/bodyweight-squat.jpg",
+      "imageAlt": "Bodyweight Squat: photo of the working position",
       "position": 32
     },
     {
@@ -1444,8 +1444,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/split-squat.jpg",
+      "imageAlt": "Split Squat: line drawing of the start and end positions",
       "position": 33
     },
     {
@@ -1478,8 +1478,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/glute-bridge.jpg",
+      "imageAlt": "Glute Bridge: line drawing of the start and end positions",
       "position": 34
     },
     {
@@ -1512,8 +1512,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/step-up.jpg",
+      "imageAlt": "Step-Up: line drawing of the start and end positions",
       "position": 35
     },
     {
@@ -1544,8 +1544,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/calf-raise-step.jpg",
+      "imageAlt": "Standing Calf Raise: photo of the working position",
       "position": 36
     },
     {
@@ -1576,8 +1576,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/plank.jpg",
+      "imageAlt": "Plank: photo of the working position",
       "position": 37
     },
     {
@@ -1608,8 +1608,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/dead-bug.jpg",
+      "imageAlt": "Dead Bug: photo of the working position",
       "position": 38
     },
     {
@@ -1642,8 +1642,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/side-plank.jpg",
+      "imageAlt": "Side Plank: line drawing of the start and end positions",
       "position": 39
     },
     {
@@ -1675,8 +1675,8 @@ module.exports = {
       "mistakes": [],
       "safetyNotes": "",
       "alternatives": [],
-      "image": "",
-      "imageAlt": "",
+      "image": "/uploads/cable-crunch.jpg",
+      "imageAlt": "Cable Crunch: line drawing of the start and end positions",
       "position": 40
     },
     {

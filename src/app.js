@@ -50,9 +50,17 @@ function createApp(config) {
   const distPath = path.join(__dirname, "../dist");
   if (fs.existsSync(distPath)) {
     // Clean URLs: /plans serves plans.html, / serves index.html.
-    app.use(express.static(distPath, { extensions: ["html"], maxAge: config.production ? "1d" : 0 }));
-    app.use((_req, res) => res.status(404).sendFile(path.join(distPath, "index.html")));
-  }
+    // Pages revalidate on every load so a deploy (new logo, colours, bundle hashes) shows at once;
+    // Vite's hashed /assets files never change, so they are cached for a year.
+    app.use(express.static(distPath, {
+      extensions: ["html"],
+      maxAge: config.production ? "1d" : 0,
+      setHeaders(res, filePath) {
+        if (filePath.endsWith(".html")) res.setHeader("Cache-Control", "no-cache");
+        else if (config.production && filePath.startsWith(path.join(distPath, "assets") + path.sep)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      },
+    }));
+    app.use((_req, res) => res.status(404).set("Cache-Control", "no-cache").sendFile(path.join(distPath, "index.html")));  }
   app.use((error, _req, res, _next) => {
     console.error(error);
     if (error?.code === 11000) return res.status(409).json({ success: false, error: "A record with this value already exists" });

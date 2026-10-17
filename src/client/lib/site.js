@@ -24,7 +24,10 @@ export function header({ links = [], cta = ["Training app", "/app"], user = null
   </div></header>`;
 }
 
-export const disclaimer = () => `<footer class="site-footer"><div class="disclaimer-title">Disclaimer</div><p class="disclaimer-text">${DISCLAIMER}</p></footer>`;
+// Attribution required by CC BY-SA for the Everkinetic drawings (see public/uploads/CREDITS.md).
+const CREDITS = `Exercise line drawings: <a href="https://github.com/everkinetic/data" target="_blank" rel="noopener">Everkinetic</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>, combined into start and end views. Some exercise photos: <a href="https://github.com/yuhonas/free-exercise-db" target="_blank" rel="noopener">free-exercise-db</a> (public domain).`;
+
+export const disclaimer = () => `<footer class="site-footer"><div class="disclaimer-title">Disclaimer</div><p class="disclaimer-text">${DISCLAIMER}</p><p class="disclaimer-text credits">${CREDITS}</p></footer>`;
 
 export const levelTag = (level) => `<span class="level lv-${esc(level)}">${esc(level)}</span>`;
 
